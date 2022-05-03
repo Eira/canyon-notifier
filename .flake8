@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 125
+
+ignore =
+    DAR101, # Missing parameter(s) in Docstring
+    DAR201, # Missing "Returns" in Docstring
