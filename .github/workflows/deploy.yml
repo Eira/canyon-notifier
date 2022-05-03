@@ -1,0 +1,30 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - deploy_with_supervisord
+
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.9
+
+    - name: Prepare dst host
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: 22
+        script: |
+          mkdir -p app
+          mkdir -p logs
+          test -d venv || python3.9 -m venv venv
+
+#          supervisorctl restart tinkoff

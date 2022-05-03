@@ -16,13 +16,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python
-        echo "$HOME/.poetry/bin" >> $GITHUB_PATH
-
     - name: Install dependencies
       run: |
+        pip install poetry
         poetry --version
         poetry install
 
