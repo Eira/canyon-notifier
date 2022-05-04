@@ -3,6 +3,7 @@ todo docstring
 """
 from dataclasses import dataclass
 from typing import List
+import httpx
 
 
 @dataclass
@@ -16,7 +17,12 @@ def _get_canyon_catalog() -> List[Bike]:
     https://www.canyon.com/en-cz/orderable-bikes/?prefn1=isInStock&prefv1=In-stock&prefn2=masterAvailabilityFlag&prefv2=1&start=0&sz=125&searchredirect=false&pn=1&format=ajax
     """
     output = []
-    # todo get html (https://www.python-httpx.org/)
+
+    r = httpx.get('https://www.canyon.com/en-cz/orderable-bikes/?prefn1=isInStock&prefv1=In-stock&prefn2=masterAvailabilityFlag&prefv2=1&start=0&sz=125&searchredirect=false&pn=1&format=ajax',
+                  timeout=10
+                  )
+    html_sourse = r.text
+
     # todo find bike-blocks (ul.li) (https://lxml.de/parsing.html) (XPATH)
     # todo for i in bike-blocks:
         # todo search title+link
