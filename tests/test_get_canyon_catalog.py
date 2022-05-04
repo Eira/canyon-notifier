@@ -1,4 +1,4 @@
-from update import _get_canyon_catalog
+from app.update import _get_canyon_catalog
 
 
 def test_get_canyon_catalog():
