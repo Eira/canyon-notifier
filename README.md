@@ -11,7 +11,7 @@ $ git clone git@github.com:Eira/canyon-notifier.git
 $ cd canyon-notifier
 $ python3.9 -m venv venv
 $ source venv/bin/activate
-$ pip install poetry
+$ pip install -U poetry pip setuptools
 $ poetry install
 ```
 
