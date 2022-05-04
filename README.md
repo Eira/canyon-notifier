@@ -15,7 +15,12 @@ $ pip install poetry
 $ poetry install
 ```
 
-
+Create env file to override default config
+```bash
+cat > .env << EOF
+redis_dsn=redis://user:pass@localhost:6379/1
+EOF
+```
 
 ### Local run tests
 ```shell
