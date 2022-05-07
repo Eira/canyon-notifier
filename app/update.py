@@ -6,6 +6,7 @@ from typing import List
 import httpx
 
 from lxml import etree
+from lxml.etree import Element
 
 from app.settings import app_settings
 
@@ -44,6 +45,9 @@ def _get_canyon_catalog() -> List[Bike]:
     # todo for i in bike-blocks:
         # todo search title+link
         # todo save new bike
+    for _ in html_bike_list:
+        bike_name_element: Element = _.cssselect('.productTile__productName')[0]
+        print(bike_name_element.text.strip())
     return output
 
 

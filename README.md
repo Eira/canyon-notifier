@@ -26,3 +26,5 @@ EOF
 ```shell
 $ pytest
 ```
+
+python -m app.update 
