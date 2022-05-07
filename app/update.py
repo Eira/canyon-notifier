@@ -5,6 +5,8 @@ from typing import List
 
 import httpx
 
+from lxml import etree
+
 from app.settings import app_settings
 
 
@@ -21,7 +23,7 @@ def _get_canyon_catalog() -> List[Bike]:
 
     query_params = {
         'prefn1': 'isInStock',
-        'prefv1': 'In - stock',
+        'prefv1': 'In-stock',
         'prefn2': 'masterAvailabilityFlag',
         'prefv2': '1',
         'start': '0',
@@ -35,9 +37,9 @@ def _get_canyon_catalog() -> List[Bike]:
         timeout=app_settings.timeout,
         params=query_params,
     )
-    html_source = catalog_response.text
-
-    # todo find bike-blocks (ul.li) (https://lxml.de/parsing.html) (XPATH)
+    html_source: str = catalog_response.text
+    html_tree = etree.HTML(html_source)
+    html_bike_list = html_tree.cssselect('.productGrid__listItem')
 
     # todo for i in bike-blocks:
         # todo search title+link
@@ -55,7 +57,7 @@ def main() -> None:
         # todo не чаще чем раз в 10 минут (time.sleep)
         # todo get actual data from canyon (_get_canyon_catalog)
         # todo update data in storage (added new & deleted missed) (_update_catalog)
-    ...
+    _get_canyon_catalog()
 
 
 if __name__ == '__main__':
