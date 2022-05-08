@@ -42,12 +42,13 @@ def _get_canyon_catalog() -> List[Bike]:
     html_tree = etree.HTML(html_source)
     html_bike_list = html_tree.cssselect('.productGrid__listItem')
 
-    # todo for i in bike-blocks:
-        # todo search title+link
-        # todo save new bike
     for _ in html_bike_list:
-        bike_name_element: Element = _.cssselect('.productTile__productName')[0]
-        print(bike_name_element.text.strip())
+        bike_name_element: Element = _.cssselect('.productTile__link')[0]
+        bike_item: Bike = Bike(
+            title=bike_name_element.get('title'),
+            link=bike_name_element.get('href'),
+        )
+        output.append(bike_item)
     return output
 
 
