@@ -1,7 +1,10 @@
-from app.update import _get_canyon_catalog
+from app.update import _get_canyon_catalog, Bike
 
 
 def test_get_canyon_catalog():
     res = _get_canyon_catalog()
 
-    # assert res is True
+    assert isinstance(res, list)
+    assert len(res) > 0
+    for item in res:
+        assert isinstance(item, Bike)

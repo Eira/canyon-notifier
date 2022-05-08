@@ -4,9 +4,7 @@ from dataclasses import dataclass
 from typing import List
 
 import httpx
-
 from lxml import etree
-from lxml.etree import Element
 
 from app.settings import app_settings
 
@@ -19,9 +17,7 @@ class Bike:
     link: str
 
 
-def _get_canyon_catalog() -> List[Bike]:
-    output: List[Bike] = []
-
+def _get_canyon_catalog_html() -> etree.HTML:
     query_params = {
         'prefn1': 'isInStock',
         'prefv1': 'In-stock',
@@ -39,17 +35,28 @@ def _get_canyon_catalog() -> List[Bike]:
         params=query_params,
     )
     html_source: str = catalog_response.text
-    html_tree = etree.HTML(html_source)
+
+    return etree.HTML(html_source)
+
+
+def _parse_canyon_catalog(html_tree: etree.HTML) -> List[Bike]:
+    output: List[Bike] = []
+
     html_bike_list = html_tree.cssselect('.productGrid__listItem')
 
-    for _ in html_bike_list:
-        bike_name_element: Element = _.cssselect('.productTile__link')[0]
+    for list_item in html_bike_list:
+        bike_name_element: etree.Element = list_item.cssselect('.productTile__link')[0]
         bike_item: Bike = Bike(
             title=bike_name_element.get('title'),
             link=bike_name_element.get('href'),
         )
         output.append(bike_item)
     return output
+
+
+def _get_canyon_catalog() -> List[Bike]:
+    html_tree = _get_canyon_catalog_html()
+    return _parse_canyon_catalog(html_tree)
 
 
 def _update_catalog() -> None:
