@@ -1,20 +1,13 @@
 """todo docstring."""
 
-from dataclasses import dataclass
 from typing import List
 
 import httpx
 from lxml import etree
 
+from app import storage
+from app.bike_model import Bike
 from app.settings import app_settings
-
-
-@dataclass
-class Bike:
-    """type of available bike."""
-
-    title: str
-    link: str
 
 
 def _get_canyon_catalog_html() -> etree.HTML:
@@ -59,17 +52,18 @@ def _get_canyon_catalog() -> List[Bike]:
     return _parse_canyon_catalog(html_tree)
 
 
-def _update_catalog() -> None:
-    ...
+def _update_catalog(uptodate_catalog: List[Bike]) -> None:
+    # TODO unit test
+    storage.clear_catalog()
+    storage.insert_uptodate_catalog(uptodate_catalog)
 
 
 def main() -> None:
     """Держит актуальным каталог велосипедов в наличии."""
     # todo while True:
         # todo не чаще чем раз в 10 минут (time.sleep)
-        # todo get actual data from canyon (_get_canyon_catalog)
-        # todo update data in storage (added new & deleted missed) (_update_catalog)
-    _get_canyon_catalog()
+        #_get_canyon_catalog()
+        #_update_catalog()
 
 
 if __name__ == '__main__':

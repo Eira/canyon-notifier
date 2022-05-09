@@ -1,4 +1,5 @@
-from app.update import _get_canyon_catalog, Bike
+from app.update import _get_canyon_catalog
+from app.bike_model import Bike
 
 
 def test_get_canyon_catalog():

@@ -1,6 +1,7 @@
 from lxml import etree
 
-from app.update import _parse_canyon_catalog, Bike
+from app.update import _parse_canyon_catalog
+from app.bike_model import Bike
 
 
 # def test_parse_canyon_catalog_few_bikes():
