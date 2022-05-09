@@ -4,8 +4,8 @@ from app.update import _parse_canyon_catalog
 from app.bike_model import Bike
 
 
-# def test_parse_canyon_catalog_few_bikes():
-# def test_parse_canyon_catalog_not_found():
+# todo def test_parse_canyon_catalog_few_bikes():
+# todo def test_parse_canyon_catalog_not_found():
 
 def test_parse_canyon_catalog_one_bike():
     one_bike_tree = etree.HTML(

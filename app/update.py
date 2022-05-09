@@ -10,7 +10,7 @@ from app.bike_model import Bike
 from app.settings import app_settings
 
 
-def _get_canyon_catalog_html() -> etree.HTML:
+def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     query_params = {
         'prefn1': 'isInStock',
         'prefv1': 'In-stock',
@@ -32,7 +32,7 @@ def _get_canyon_catalog_html() -> etree.HTML:
     return etree.HTML(html_source)
 
 
-def _parse_canyon_catalog(html_tree: etree.HTML) -> List[Bike]:
+def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437
     output: List[Bike] = []
 
     html_bike_list = html_tree.cssselect('.productGrid__listItem')
