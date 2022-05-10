@@ -11,6 +11,7 @@ class AppSettings(BaseSettings):
 
     redis_dsn: Optional[RedisDsn] = None
     timeout: int = 10
+    throttling_time: float = 600.0
 
 
 app_settings = AppSettings(

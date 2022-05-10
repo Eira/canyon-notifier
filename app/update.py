@@ -1,5 +1,5 @@
 """todo docstring."""
-
+import time
 from typing import List
 
 import httpx
@@ -58,15 +58,20 @@ def _update_catalog(uptodate_catalog: List[Bike]) -> None:
     storage.insert_uptodate_catalog(uptodate_catalog)
 
 
-def main() -> None:
+def main(throttling_time: float) -> None:
     """Держит актуальным каталог велосипедов в наличии."""
-    # todo while True:
-        # todo не чаще чем раз в 10 минут (time.sleep)
-        #_get_canyon_catalog()
-        #_update_catalog()
+    # todo unittest
+    cnt = 0
+    while cnt < 2:
+        cnt += 1
+        uptodate_catalog: List[Bike] = _get_canyon_catalog()
+        _update_catalog(uptodate_catalog)
+        print(len(uptodate_catalog))
+
+        time.sleep(throttling_time)
 
 
 if __name__ == '__main__':
-    main()
+    main(throttling_time=app_settings.throttling_time)
 
 # todo unittest _get_canyon_catalog

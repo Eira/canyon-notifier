@@ -1,3 +1,5 @@
+"""Description of available canyon bike item."""
+
 from dataclasses import dataclass
 
 
