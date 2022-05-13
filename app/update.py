@@ -73,5 +73,3 @@ def main(throttling_time: float) -> None:
 
 if __name__ == '__main__':
     main(throttling_time=app_settings.throttling_time)
-
-# todo unittest _get_canyon_catalog
