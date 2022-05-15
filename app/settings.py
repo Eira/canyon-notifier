@@ -1,6 +1,7 @@
 """Application settings."""
 
 import os
+from typing import Optional
 
 from pydantic import BaseSettings, RedisDsn
 
@@ -8,7 +9,9 @@ from pydantic import BaseSettings, RedisDsn
 class AppSettings(BaseSettings):
     """Application settings class."""
 
-    redis_dsn: RedisDsn
+    redis_dsn: Optional[RedisDsn] = None
+    timeout: int = 10
+    throttling_time: float = 600.0
 
 
 app_settings = AppSettings(
