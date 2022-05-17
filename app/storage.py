@@ -9,11 +9,11 @@ def clear_catalog() -> int:
     """Delete old catalog in database."""
     # todo unit test
 
-    ...
+    return 0  # amount of deleted bikes
 
 
 def insert_uptodate_catalog(uptodate_catalog: List[Bike]) -> int:
     """Save actual catalog to the database."""
     # todo unit test
 
-    ...
+    return 0  # amount added bikes
