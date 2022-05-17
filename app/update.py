@@ -1,4 +1,5 @@
 """todo docstring."""
+import logging
 import time
 from typing import List
 
@@ -60,16 +61,25 @@ def _update_catalog(uptodate_catalog: List[Bike]) -> None:
 
 def main(throttling_time: float) -> None:
     """Держит актуальным каталог велосипедов в наличии."""
+
     # todo unittest
     cnt = 0
     while cnt < 2:
+        logging.info(f'current iteration is {cnt}')
         cnt += 1
+        # todo try except for request errors
         uptodate_catalog: List[Bike] = _get_canyon_catalog()
+        if not uptodate_catalog:
+            logging.warning(f'empty catalog found!')
+
         _update_catalog(uptodate_catalog)
+
         print(len(uptodate_catalog))
 
         time.sleep(throttling_time)
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG if app_settings.debug else logging.INFO)
+
     main(throttling_time=app_settings.throttling_time)

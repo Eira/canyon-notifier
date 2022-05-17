@@ -21,6 +21,16 @@ cat > .env << EOF
 redis_dsn=redis://user:pass@localhost:6379/1
 EOF
 ```
+# Logs configuration
+```
+в файле .env напишем
+debug=true
+в сеттингсах напишем
+debug: bool = False
+в ранере пишем
+logging.basicConfig(level=logging.DEBUG if app_settings.debug else logging.INFO)
+```
+
 
 ### Local run tests
 ```shell

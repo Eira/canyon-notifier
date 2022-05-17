@@ -1,5 +1,4 @@
 """Application settings."""
-
 import os
 from typing import Optional
 
@@ -12,6 +11,7 @@ class AppSettings(BaseSettings):
     redis_dsn: Optional[RedisDsn] = None
     timeout: int = 10
     throttling_time: float = 600.0
+    debug: bool = False
 
 
 app_settings = AppSettings(
