@@ -1,6 +1,7 @@
 """todo docstring."""
+import logging
 import time
-from typing import List
+from typing import List, Tuple
 
 import httpx
 from lxml import etree
@@ -52,24 +53,39 @@ def _get_canyon_catalog() -> List[Bike]:
     return _parse_canyon_catalog(html_tree)
 
 
-def _update_catalog(uptodate_catalog: List[Bike]) -> None:
+def _update_catalog(uptodate_catalog: List[Bike]) -> Tuple[int, int]:
     # TODO unit test
-    storage.clear_catalog()
-    storage.insert_uptodate_catalog(uptodate_catalog)
+    items_deleted: int = storage.clear_catalog()
+    items_added: int = storage.insert_uptodate_catalog(uptodate_catalog)
+
+    return items_deleted, items_added
 
 
 def main(throttling_time: float) -> None:
     """Держит актуальным каталог велосипедов в наличии."""
     # todo unittest
     cnt = 0
-    while cnt < 2:
-        cnt += 1
-        uptodate_catalog: List[Bike] = _get_canyon_catalog()
-        _update_catalog(uptodate_catalog)
-        print(len(uptodate_catalog))
+    while cnt < 2:  # todo написать true
+        if cnt:
+            time.sleep(throttling_time)
 
-        time.sleep(throttling_time)
+        logging.info(f'Current iteration is {cnt}')
+        cnt += 1
+        # todo try except for request errors
+
+        actual_catalog: List[Bike] = _get_canyon_catalog()
+        logging.info(f'{len(actual_catalog)} bikes was got')
+        logging.debug(f'{actual_catalog=}')
+
+        if not actual_catalog:
+            logging.warning('empty catalog found!')
+            continue
+
+        items_deleted, items_added = _update_catalog(actual_catalog)
+        logging.info(f'{items_deleted} old bikes was deleted. {items_added} new bikes was added.')
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG if app_settings.debug else logging.INFO)
+
     main(throttling_time=app_settings.throttling_time)

@@ -18,7 +18,8 @@ $ poetry install
 Create env file to override default config
 ```bash
 cat > .env << EOF
-redis_dsn=redis://user:pass@localhost:6379/1
+throttling_time=10.0
+debug=true
 EOF
 ```
 
@@ -27,4 +28,12 @@ EOF
 $ pytest
 ```
 
+### Local run app
+```
 python -m app.update 
+```
+
+### Local run flake
+```
+poetry run flake8 app/
+```
