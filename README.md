@@ -18,32 +18,22 @@ $ poetry install
 Create env file to override default config
 ```bash
 cat > .env << EOF
-redis_dsn=redis://user:pass@localhost:6379/1
+throttling_time=10.0
+debug=true
 EOF
 ```
-# Logs configuration
-```
-в файле .env напишем
-debug=true
-в сеттингсах напишем
-debug: bool = False
-в ранере пишем
-logging.basicConfig(level=logging.DEBUG if app_settings.debug else logging.INFO)
-```
-
 
 ### Local run tests
 ```shell
-$  poetry run pytest
+$ pytest
 ```
 
-### local run app
+### Local run app
 ```
 python -m app.update 
 ```
 
-### lokal run flake
+### Local run flake
 ```
 poetry run flake8 app/
-
 ```

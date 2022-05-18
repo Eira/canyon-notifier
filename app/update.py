@@ -65,22 +65,24 @@ def main(throttling_time: float) -> None:
     """Держит актуальным каталог велосипедов в наличии."""
     # todo unittest
     cnt = 0
-    while cnt < 2:
+    while cnt < 2:  # todo написать true
+        if cnt:
+            time.sleep(throttling_time)
+
         logging.info(f'Current iteration is {cnt}')
         cnt += 1
         # todo try except for request errors
 
-        uptodate_catalog: List[Bike] = _get_canyon_catalog()
-        logging.info(f'{len(uptodate_catalog)} bikes was got')
-        logging.debug(f'{uptodate_catalog=}')
-        if not uptodate_catalog:
+        actual_catalog: List[Bike] = _get_canyon_catalog()
+        logging.info(f'{len(actual_catalog)} bikes was got')
+        logging.debug(f'{actual_catalog=}')
+
+        if not actual_catalog:
             logging.warning('empty catalog found!')
+            continue
 
-        items_deleted, items_added = _update_catalog(uptodate_catalog)
-        logging.info(f'{items_deleted} old bikes was deleted.')
-        logging.info(f'{items_added} new bikes was added.')
-
-        time.sleep(throttling_time)
+        items_deleted, items_added = _update_catalog(actual_catalog)
+        logging.info(f'{items_deleted} old bikes was deleted. {items_added} new bikes was added.')
 
 
 if __name__ == '__main__':
