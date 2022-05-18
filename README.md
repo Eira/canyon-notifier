@@ -34,7 +34,16 @@ logging.basicConfig(level=logging.DEBUG if app_settings.debug else logging.INFO)
 
 ### Local run tests
 ```shell
-$ pytest
+$  poetry run pytest
 ```
 
+### local run app
+```
 python -m app.update 
+```
+
+### lokal run flake
+```
+poetry run flake8 app/
+
+```

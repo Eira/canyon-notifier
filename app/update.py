@@ -63,7 +63,6 @@ def _update_catalog(uptodate_catalog: List[Bike]) -> Tuple[int, int]:
 
 def main(throttling_time: float) -> None:
     """Держит актуальным каталог велосипедов в наличии."""
-
     # todo unittest
     cnt = 0
     while cnt < 2:
@@ -75,7 +74,7 @@ def main(throttling_time: float) -> None:
         logging.info(f'{len(uptodate_catalog)} bikes was got')
         logging.debug(f'{uptodate_catalog=}')
         if not uptodate_catalog:
-            logging.warning(f'empty catalog found!')
+            logging.warning('empty catalog found!')
 
         items_deleted, items_added = _update_catalog(uptodate_catalog)
         logging.info(f'{items_deleted} old bikes was deleted.')
