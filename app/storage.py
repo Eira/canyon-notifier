@@ -2,8 +2,11 @@
 
 from typing import List
 
+import aioredis
+
 from app.bike_model import Bike
 
+db_pool: aioredis.Redis = await aioredis.from_url("redis://localhost",  db=1)
 
 def clear_catalog() -> int:
     """Delete old catalog in database."""
