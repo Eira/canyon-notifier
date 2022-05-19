@@ -56,7 +56,7 @@ def _get_canyon_catalog() -> List[Bike]:
 def _update_catalog(uptodate_catalog: List[Bike]) -> Tuple[int, int]:
     # TODO unit test
     items_deleted: int = storage.clear_catalog()
-    items_added: int = storage.insert_uptodate_catalog(uptodate_catalog)
+    items_added: int = storage.insert_actual_catalog(uptodate_catalog)
 
     return items_deleted, items_added
 

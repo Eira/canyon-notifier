@@ -1,5 +1,5 @@
 """Methods for access the database."""
-
+import datetime
 from typing import List
 
 import aioredis
@@ -21,9 +21,11 @@ def clear_catalog() -> int:
     return 0  # amount of deleted bikes
 
 
-def insert_uptodate_catalog(uptodate_catalog: List[Bike]) -> int:
+async def insert_actual_catalog(uptodate_catalog: List[Bike]) -> int:
     """Save actual catalog to the database."""
     # todo unit test
     # todo implement
+
+    await db_pool.set('last_update_date', str(datetime.datetime.utcnow()))
 
     return 0  # amount added bikes
