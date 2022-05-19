@@ -20,6 +20,7 @@ Create env file to override default config
 cat > .env << EOF
 throttling_time=10.0
 debug=true
+redis_dsn= redis://localhost:6379/1
 EOF
 ```
 
