@@ -1,11 +1,15 @@
 """Methods for access the database."""
 import datetime
+from dataclasses import asdict
 from typing import List
 
 import aioredis
 
 from app.bike_model import Bike
 from app.settings import app_settings
+
+BIKE_KEY = 'canyon-notifier:bike:{0}'
+CATALOG_UPDATE_DATE = 'canyon-notifier:catalog:last_update_date'
 
 db_pool: aioredis.Redis = aioredis.from_url(
     app_settings.redis_dsn,
@@ -21,11 +25,14 @@ def clear_catalog() -> int:
     return 0  # amount of deleted bikes
 
 
-async def insert_actual_catalog(uptodate_catalog: List[Bike]) -> int:
+async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
     """Save actual catalog to the database."""
     # todo unit test
-    # todo implement
 
-    await db_pool.set('last_update_date', str(datetime.datetime.utcnow()))
+    # todo implement
+    for item in actual_catalog:
+        await db_pool.hset(BIKE_KEY.format(item.title), mapping=asdict(item))
+
+    await db_pool.set(CATALOG_UPDATE_DATE, str(datetime.datetime.utcnow()))
 
     return 0  # amount added bikes
