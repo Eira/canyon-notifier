@@ -1,6 +1,5 @@
 """Application settings."""
 import os
-from typing import Optional
 
 from pydantic import BaseSettings, Field, RedisDsn
 

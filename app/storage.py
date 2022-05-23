@@ -9,13 +9,15 @@ from app.bike_model import Bike
 from app.settings import app_settings
 
 BIKE_KEY = 'canyon-notifier:bike:{0}'
-CATALOG_UPDATE_DATE = 'canyon-notifier:catalog:last_update_date'
+ACTUAL_CATALOG_KEY = 'canyon-notifier:catalog'
+CATALOG_UPDATE_DATE_KEY = 'canyon-notifier:catalog:last_update_date'
 
 db_pool: aioredis.Redis = aioredis.from_url(
     app_settings.redis_dsn,
-    encoding="utf-8",
+    encoding='utf-8',
     decode_responses=True,
 )
+
 
 def clear_catalog() -> int:
     """Delete old catalog in database."""
@@ -30,9 +32,10 @@ async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
     # todo unit test
 
     # todo implement
-    for item in actual_catalog:
-        await db_pool.hset(BIKE_KEY.format(item.title), mapping=asdict(item))
+    for bike_item in actual_catalog:
+        await db_pool.sadd(ACTUAL_CATALOG_KEY, bike_item.title)
+        await db_pool.hset(BIKE_KEY.format(bike_item.title), mapping=asdict(bike_item))
 
-    await db_pool.set(CATALOG_UPDATE_DATE, str(datetime.datetime.utcnow()))
+    await db_pool.set(CATALOG_UPDATE_DATE_KEY, str(datetime.datetime.utcnow()))
 
-    return 0  # amount added bikes
+    return await db_pool.scard(ACTUAL_CATALOG_KEY)

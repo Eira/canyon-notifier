@@ -1,4 +1,5 @@
 """todo docstring."""
+import asyncio
 import logging
 import time
 from typing import List, Tuple
@@ -53,15 +54,15 @@ def _get_canyon_catalog() -> List[Bike]:
     return _parse_canyon_catalog(html_tree)
 
 
-def _update_catalog(uptodate_catalog: List[Bike]) -> Tuple[int, int]:
+async def _update_catalog(uptodate_catalog: List[Bike]) -> Tuple[int, int]:
     # TODO unit test
     items_deleted: int = storage.clear_catalog()
-    items_added: int = storage.insert_actual_catalog(uptodate_catalog)
+    items_added: int = await storage.insert_actual_catalog(uptodate_catalog)
 
     return items_deleted, items_added
 
 
-def main(throttling_time: float) -> None:
+async def main(throttling_time: float) -> None:
     """Держит актуальным каталог велосипедов в наличии."""
     # todo unittest
     cnt = 0
@@ -81,11 +82,11 @@ def main(throttling_time: float) -> None:
             logging.warning('empty catalog found!')
             continue
 
-        items_deleted, items_added = _update_catalog(actual_catalog)
+        items_deleted, items_added = await _update_catalog(actual_catalog)
         logging.info(f'{items_deleted} old bikes was deleted. {items_added} new bikes was added.')
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG if app_settings.debug else logging.INFO)
 
-    main(throttling_time=app_settings.throttling_time)
+    asyncio.run(main(throttling_time=app_settings.throttling_time))
