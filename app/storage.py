@@ -19,7 +19,7 @@ db_pool: aioredis.Redis = aioredis.from_url(
 )
 
 
-def clear_catalog() -> int:
+async def clear_catalog(actual_catalog: List[Bike]) -> int:
     """Delete old catalog in database."""
     # todo unit test
     # todo implement

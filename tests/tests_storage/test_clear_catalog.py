@@ -1,18 +1,11 @@
 import pytest
 
 from app.bike_model import Bike
-from app.storage import insert_actual_catalog
+from app.storage import clear_catalog
 
 
 @pytest.mark.asyncio
-async def test_insert_actual_catalog_empty_catalog():
-    res = await insert_actual_catalog([])
-
-    assert res == 0
-
-
-@pytest.mark.asyncio
-async def test_insert_actual_catalog():
+async def test_clear_catalog():
     bikes_list = [
         Bike(
             title='Spectral 125 CF 9',
@@ -23,6 +16,6 @@ async def test_insert_actual_catalog():
             link='https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
         )
     ]
-    res = await insert_actual_catalog(bikes_list)
+    res = await clear_catalog(bikes_list)
 
     assert res == 2
