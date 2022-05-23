@@ -14,18 +14,18 @@ from app.settings import app_settings
 
 def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     query_params = {
+        'cgid': 'orderable-bikes',
         'prefn1': 'isInStock',
         'prefv1': 'In-stock',
-        'prefn2': 'masterAvailabilityFlag',
-        'prefv2': '1',
         'start': '0',
-        'sz': '125',
+        'sz': '300',
         'searchredirect': 'false',
         'pn': '1',
         'format': 'ajax',
     }
+
     catalog_response = httpx.get(
-        'https://www.canyon.com/en-cz/orderable-bikes/',
+        'https://www.canyon.com/on/demandware.store/Sites-RoW-Site/en_CZ/Search-IncludeProductGrid',
         timeout=app_settings.timeout,
         params=query_params,
     )
