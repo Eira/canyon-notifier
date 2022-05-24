@@ -19,19 +19,18 @@ db_pool: aioredis.Redis = aioredis.from_url(
 )
 
 
-async def clear_catalog(actual_catalog: List[Bike]) -> int:
+async def clear_catalog() -> int:
     """Delete old catalog in database."""
-    # todo unit test
-    # todo implement
+    # todo make unit test for 0 bikes
+    deleted_bikes_amount = await db_pool.scard(ACTUAL_CATALOG_KEY)
+    await db_pool.delete(ACTUAL_CATALOG_KEY)
 
-    return 0  # amount of deleted bikes
+    return deleted_bikes_amount
 
 
 async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
     """Save actual catalog to the database."""
-    # todo unit test
 
-    # todo implement
     for bike_item in actual_catalog:
         await db_pool.sadd(ACTUAL_CATALOG_KEY, bike_item.title)
         await db_pool.hset(BIKE_KEY.format(bike_item.title), mapping=asdict(bike_item))
@@ -39,3 +38,10 @@ async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
     await db_pool.set(CATALOG_UPDATE_DATE_KEY, str(datetime.datetime.utcnow()))
 
     return await db_pool.scard(ACTUAL_CATALOG_KEY)
+
+
+async def get_catalog() -> List[Bike]:
+    # todo взять все названия байков из сета ACTUAL_CATALOG_KEY
+    # todo для каждого имени байка найти данные из хешмапы
+    # todo форматировать в список байков
+    ...

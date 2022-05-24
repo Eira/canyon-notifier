@@ -54,10 +54,10 @@ def _get_canyon_catalog() -> List[Bike]:
     return _parse_canyon_catalog(html_tree)
 
 
-async def _update_catalog(uptodate_catalog: List[Bike]) -> Tuple[int, int]:
+async def _update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
     # TODO unit test
-    items_deleted: int = storage.clear_catalog()
-    items_added: int = await storage.insert_actual_catalog(uptodate_catalog)
+    items_deleted: int = await storage.clear_catalog(actual_catalog)
+    items_added: int = await storage.insert_actual_catalog(actual_catalog)
 
     return items_deleted, items_added
 

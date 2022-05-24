@@ -1,21 +1,11 @@
 import pytest
 
-from app.bike_model import Bike
-from app.storage import clear_catalog
+from app.storage import clear_catalog, get_catalog
 
 
 @pytest.mark.asyncio
-async def test_clear_catalog():
-    bikes_list = [
-        Bike(
-            title='Spectral 125 CF 9',
-            link='https://www.canyon.com/en-cz/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR',
-        ),
-        Bike(
-            title='Exceed CF 7',
-            link='https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
-        )
-    ]
-    res = await clear_catalog(bikes_list)
+async def test_clear_catalog(fixture_prefilled_catalog):
+    res = await clear_catalog()
 
+    assert await get_catalog() == []
     assert res == 2
