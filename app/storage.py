@@ -32,8 +32,9 @@ async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
     """Save actual catalog to the database."""
 
     for bike_item in actual_catalog:
-        await db_pool.sadd(ACTUAL_CATALOG_KEY, bike_item.title)
-        await db_pool.hset(BIKE_KEY.format(bike_item.title), mapping=asdict(bike_item))
+
+        await db_pool.sadd(ACTUAL_CATALOG_KEY, bike_item.id)
+        await db_pool.hset(BIKE_KEY.format(bike_item.id), mapping=asdict(bike_item))
 
     await db_pool.set(CATALOG_UPDATE_DATE_KEY, str(datetime.datetime.utcnow()))
 
@@ -41,7 +42,8 @@ async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
 
 
 async def get_catalog() -> List[Bike]:
-    # todo взять все названия байков из сета ACTUAL_CATALOG_KEY
-    # todo для каждого имени байка найти данные из хешмапы
-    # todo форматировать в список байков
-    ...
+    # взять все названия байков из сета ACTUAL_CATALOG_KEY
+    # для каждого имени байка найти данные из хешмапы
+    # форматировать в список байков
+
+    return []

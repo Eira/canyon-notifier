@@ -34,6 +34,13 @@ def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     return etree.HTML(html_source)
 
 
+def normalize_bike_id(bike_title: str) -> str:
+    """ Brings the id to the same view: lowercase, underscore instead of whitespace"""
+
+    bike_id = bike_title.replace(" ", "_").lower()
+
+    return bike_id
+
 def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437
     output: List[Bike] = []
 
@@ -42,10 +49,12 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
     for list_item in html_bike_list:
         bike_name_element: etree.Element = list_item.cssselect('.productTile__link')[0]
         bike_item: Bike = Bike(
+            id=normalize_bike_id(bike_name_element.get('title')),
             title=bike_name_element.get('title'),
             link=bike_name_element.get('href'),
         )
         output.append(bike_item)
+
     return output
 
 
@@ -64,15 +73,14 @@ async def _update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
 
 async def main(throttling_time: float) -> None:
     """Держит актуальным каталог велосипедов в наличии."""
-    # todo unittest
+    # todo unit test
     cnt = 0
-    while cnt < 2:  # todo написать true
+    while cnt < 2:  # todo вынести в сеттингс
         if cnt:
             time.sleep(throttling_time)
 
         logging.info(f'Current iteration is {cnt}')
         cnt += 1
-        # todo try except for request errors
 
         actual_catalog: List[Bike] = _get_canyon_catalog()
         logging.info(f'{len(actual_catalog)} bikes was got')

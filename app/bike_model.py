@@ -7,5 +7,6 @@ from dataclasses import dataclass
 class Bike:
     """type of available bike."""
 
+    id: str
     title: str
     link: str
