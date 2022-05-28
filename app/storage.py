@@ -20,7 +20,7 @@ db_pool: aioredis.Redis = aioredis.from_url(
 
 
 async def clear_catalog() -> int:
-    """Delete old catalog in database."""
+    """Delete old catalog in database. Return amount of deleted bikes."""
     deleted_bikes_amount = await db_pool.scard(ACTUAL_CATALOG_KEY)
     await db_pool.delete(ACTUAL_CATALOG_KEY)
 
@@ -28,7 +28,7 @@ async def clear_catalog() -> int:
 
 
 async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
-    """Save actual catalog to the database."""
+    """Save actual catalog to the database. Return amount of inserted items."""
     for bike_item in actual_catalog:
 
         await db_pool.sadd(ACTUAL_CATALOG_KEY, bike_item.id)
@@ -40,7 +40,7 @@ async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
 
 
 async def get_catalog() -> List[Bike]:
-    """Get actual catalog from the database."""
+    """Get actual catalog from the database. Return list of bikes in elements."""
     # взять все названия байков из сета ACTUAL_CATALOG_KEY
     # для каждого имени байка найти данные из хешмапы
     # форматировать в список байков

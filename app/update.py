@@ -13,7 +13,7 @@ from app.settings import app_settings
 
 
 def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
-    """Get HTML from the web page."""
+    """Get HTML from the canyon catalog web page. Return HTML."""
     query_params = {
         'cgid': 'orderable-bikes',
         'prefn1': 'isInStock',
@@ -36,12 +36,12 @@ def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
 
 
 def normalize_bike_id(bike_title: str) -> str:
-    """Brings the id to the same view: lowercase, underscore instead of whitespace."""
+    """Bring the id to the same view: lowercase, underscore instead of whitespace. Return bike id normalized."""
     return bike_title.replace(' ', '_').lower()
 
 
 def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437
-    """Make the list of bike elements from HTML."""
+    """Make the list of bike elements from HTML. Return list of bikes in elements."""
     output: List[Bike] = []
 
     html_bike_list = html_tree.cssselect('.productGrid__listItem')
@@ -59,7 +59,7 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
 
 
 async def _update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
-    """Clear the old catalog in database and insert actual."""
+    """Clear the old catalog in database and insert actual. Return amount of deleted and added items."""
     items_deleted: int = await storage.clear_catalog()
     items_added: int = await storage.insert_actual_catalog(actual_catalog)
 
