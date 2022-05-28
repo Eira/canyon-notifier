@@ -75,9 +75,8 @@ def _get_canyon_catalog() -> List[Bike]:
     return _parse_canyon_catalog(html_tree)
 
 
-async def main(throttling_time: float, amount_of_iterations: int) -> None:
+async def main(throttling_time: float, amount_of_iterations: int) -> int:
     """Keeps catalog of available bikes uptodate."""
-    # todo unit test
     cnt = 0
     while cnt < amount_of_iterations or not amount_of_iterations:
         if cnt:
@@ -96,6 +95,8 @@ async def main(throttling_time: float, amount_of_iterations: int) -> None:
 
         items_deleted, items_added = await _update_catalog(actual_catalog)
         logging.info(f'{items_deleted} old bikes was deleted. {items_added} new bikes was added.')
+
+    return cnt
 
 
 if __name__ == '__main__':
