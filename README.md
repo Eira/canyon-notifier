@@ -1,5 +1,7 @@
 # canyon-notifier
 ---
+[![tests](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml)
+
 
 ### Pre-requirements
 - [redis server up and running](https://redis.io/docs/getting-started/installation/)
