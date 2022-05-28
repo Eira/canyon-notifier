@@ -1,4 +1,5 @@
 import asyncio
+from typing import List
 
 import pytest
 
@@ -13,7 +14,7 @@ async def fixture_empty_catalog():
 
 
 @pytest.fixture()
-async def fixture_prefilled_catalog(fixture_empty_catalog):
+async def fixture_prefilled_catalog(fixture_empty_catalog) -> List[Bike]:
     bikes_list = [
         Bike(
             id='spectral_125_cf_9',
@@ -28,7 +29,7 @@ async def fixture_prefilled_catalog(fixture_empty_catalog):
     ]
 
     await insert_actual_catalog(bikes_list)
-    yield
+    yield bikes_list
     await clear_catalog()
 
 

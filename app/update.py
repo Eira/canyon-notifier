@@ -13,6 +13,7 @@ from app.settings import app_settings
 
 
 def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
+    """ Get HTML from the web page."""
     query_params = {
         'cgid': 'orderable-bikes',
         'prefn1': 'isInStock',
@@ -41,7 +42,9 @@ def normalize_bike_id(bike_title: str) -> str:
 
     return bike_id
 
+
 def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437
+    """Make the list of bike elements from HTML."""
     output: List[Bike] = []
 
     html_bike_list = html_tree.cssselect('.productGrid__listItem')
@@ -64,15 +67,16 @@ def _get_canyon_catalog() -> List[Bike]:
 
 
 async def _update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
-    # TODO unit test
-    items_deleted: int = await storage.clear_catalog(actual_catalog)
+    """ Clearing the old catalog in database and insert actual."""
+
+    items_deleted: int = await storage.clear_catalog()
     items_added: int = await storage.insert_actual_catalog(actual_catalog)
 
     return items_deleted, items_added
 
 
 async def main(throttling_time: float) -> None:
-    """Держит актуальным каталог велосипедов в наличии."""
+    """Keeps catalog of available bikes uptodate."""
     # todo unit test
     cnt = 0
     while cnt < 2:  # todo вынести в сеттингс

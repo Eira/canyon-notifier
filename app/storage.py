@@ -21,7 +21,7 @@ db_pool: aioredis.Redis = aioredis.from_url(
 
 async def clear_catalog() -> int:
     """Delete old catalog in database."""
-    # todo make unit test for 0 bikes
+
     deleted_bikes_amount = await db_pool.scard(ACTUAL_CATALOG_KEY)
     await db_pool.delete(ACTUAL_CATALOG_KEY)
 
