@@ -1,4 +1,4 @@
-"""todo docstring."""
+"""This module is parsing canyon catalog page to the database, and updating that catalog at given time intervals."""
 import asyncio
 import logging
 import time
@@ -13,7 +13,7 @@ from app.settings import app_settings
 
 
 def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
-    """ Get HTML from the web page."""
+    """Get HTML from the web page."""
     query_params = {
         'cgid': 'orderable-bikes',
         'prefn1': 'isInStock',
@@ -36,11 +36,8 @@ def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
 
 
 def normalize_bike_id(bike_title: str) -> str:
-    """ Brings the id to the same view: lowercase, underscore instead of whitespace"""
-
-    bike_id = bike_title.replace(" ", "_").lower()
-
-    return bike_id
+    """Brings the id to the same view: lowercase, underscore instead of whitespace."""
+    return bike_title.replace(' ', '_').lower()
 
 
 def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437
@@ -62,8 +59,7 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
 
 
 async def _update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
-    """ Clearing the old catalog in database and insert actual."""
-
+    """Clear the old catalog in database and insert actual."""
     items_deleted: int = await storage.clear_catalog()
     items_added: int = await storage.insert_actual_catalog(actual_catalog)
 
@@ -76,7 +72,12 @@ def _get_canyon_catalog() -> List[Bike]:
 
 
 async def main(throttling_time: float, amount_of_iterations: int) -> int:
-    """Keeps catalog of available bikes uptodate."""
+    """
+    Do the main runner of our worker.
+
+    Keep catalog of available bikes uptodate.
+    Return amount of repeats.
+    """
     cnt = 0
     while cnt < amount_of_iterations or not amount_of_iterations:
         if cnt:
