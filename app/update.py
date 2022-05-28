@@ -61,11 +61,6 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
     return output
 
 
-def _get_canyon_catalog() -> List[Bike]:
-    html_tree = _get_canyon_catalog_html()
-    return _parse_canyon_catalog(html_tree)
-
-
 async def _update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
     """ Clearing the old catalog in database and insert actual."""
 
@@ -75,11 +70,16 @@ async def _update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
     return items_deleted, items_added
 
 
-async def main(throttling_time: float) -> None:
+def _get_canyon_catalog() -> List[Bike]:
+    html_tree = _get_canyon_catalog_html()
+    return _parse_canyon_catalog(html_tree)
+
+
+async def main(throttling_time: float, amount_of_iterations: int) -> None:
     """Keeps catalog of available bikes uptodate."""
     # todo unit test
     cnt = 0
-    while cnt < 2:  # todo вынести в сеттингс
+    while cnt < amount_of_iterations or not amount_of_iterations:
         if cnt:
             time.sleep(throttling_time)
 
@@ -101,4 +101,4 @@ async def main(throttling_time: float) -> None:
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG if app_settings.debug else logging.INFO)
 
-    asyncio.run(main(throttling_time=app_settings.throttling_time))
+    asyncio.run(main(throttling_time=app_settings.throttling_time, amount_of_iterations=app_settings.amount_of_iterations))

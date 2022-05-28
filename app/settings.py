@@ -11,6 +11,7 @@ class AppSettings(BaseSettings):
     timeout: int = Field(10, description='время ожидания ответа сервера canyon')
     throttling_time: float = Field(600.0, description='время ожидания между обновлениями')
     debug: bool = Field(False, description='настройка уровня логирования')
+    amount_of_iterations: int = Field(0, description='сколько раз будет запускаться функция main')
 
 
 app_settings = AppSettings(
