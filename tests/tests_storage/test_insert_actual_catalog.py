@@ -1,20 +1,16 @@
-import asyncio
-from typing import List
-
 import pytest
 
 from app.bike_model import Bike
-from app.storage import clear_catalog, insert_actual_catalog
+from app.storage import insert_actual_catalog
 
 
-@pytest.fixture()
-async def fixture_empty_catalog():
-    await clear_catalog()
-    yield
+async def test_insert_actual_catalog_empty_catalog(fixture_empty_catalog):
+    res = await insert_actual_catalog([])
+
+    assert res == 0
 
 
-@pytest.fixture()
-async def fixture_prefilled_catalog(fixture_empty_catalog) -> List[Bike]:
+async def test_insert_actual_catalog_happy_path():
     bikes_list = [
         Bike(
             id='spectral_125_cf_9',
@@ -27,14 +23,6 @@ async def fixture_prefilled_catalog(fixture_empty_catalog) -> List[Bike]:
             link='https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
         )
     ]
+    res = await insert_actual_catalog(bikes_list)
 
-    await insert_actual_catalog(bikes_list)
-    yield bikes_list
-    await clear_catalog()
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    loop = asyncio.get_event_loop()
-    yield loop
-    loop.close()
+    assert res == 2

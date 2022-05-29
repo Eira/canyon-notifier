@@ -255,6 +255,7 @@ or from 19.383,17 CZK/Mo.
     assert isinstance(res, list)
     assert len(res) == 1
     assert isinstance(res[0], Bike)
+    assert res[0].id == 'speedmax_cf_8_disc'
     assert res[0].title == 'Speedmax CF 8 Disc'
     assert res[0].link == 'https://www.canyon.com/en-cz/road-bikes/triathlon-bikes/speedmax/cf/speedmax-cf-8-disc/3059.html?dwvar_3059_pv_rahmenfarbe=YE%2FBK'
 
@@ -988,6 +989,9 @@ or from 25.566,50 CZK/Mo.
     res = _parse_canyon_catalog(few_bike_tree)
 
     assert len(res) == 3
+    assert res[0].id == 'speedmax_cf_8_disc'
+    assert res[1].id == 'speedmax_cf_7_disc'
+    assert res[2].id == 'spectral_125_cf_9'
     assert res[0].title == 'Speedmax CF 8 Disc'
     assert res[1].title == 'Speedmax CF 7 Disc'
     assert res[2].title == 'Spectral 125 CF 9'

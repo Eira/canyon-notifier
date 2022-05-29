@@ -30,7 +30,11 @@ jobs:
       run: |
         poetry run flake8 app/
 
+    - uses: shogo82148/actions-setup-redis@v1
+      with:
+        redis-version: 'latest'
+    - run: redis-cli ping
+
     - name: Run tests
       run: |
         poetry run pytest -ra -v --cov=app
-
