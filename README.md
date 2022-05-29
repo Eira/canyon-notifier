@@ -25,7 +25,7 @@ EOF
 
 ### Local run tests
 ```shell
-$ pytest
+$ pytest --cov=app
 ```
 
 ### Local run app
