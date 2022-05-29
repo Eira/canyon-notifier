@@ -41,3 +41,5 @@ python -m app.update
 ```
 poetry run flake8 app/
 ```
+
+### Check [production logs online](http://canyon.esemi.ru/)
