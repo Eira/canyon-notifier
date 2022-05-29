@@ -76,7 +76,7 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
     Do the main runner of our worker.
 
     Keep catalog of available bikes uptodate.
-    Return amount of repeats.
+    Return amount of iterations.
     """
     cnt = 0
     while cnt < amount_of_iterations or not amount_of_iterations:
@@ -101,6 +101,9 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG if app_settings.debug else logging.INFO)
+    logging.basicConfig(
+        level=logging.DEBUG if app_settings.debug else logging.INFO,
+        format='%(asctime)s %(levelname)-8s %(message)s',  # noqa: WPS323
+    )
 
     asyncio.run(main(throttling_time=app_settings.throttling_time, amount_of_iterations=app_settings.amount_of_iterations))

@@ -4,15 +4,13 @@ from app.bike_model import Bike
 from app.storage import insert_actual_catalog
 
 
-@pytest.mark.asyncio
 async def test_insert_actual_catalog_empty_catalog(fixture_empty_catalog):
     res = await insert_actual_catalog([])
 
     assert res == 0
 
 
-@pytest.mark.asyncio
-async def test_insert_actual_catalog():
+async def test_insert_actual_catalog_happy_path():
     bikes_list = [
         Bike(
             id='spectral_125_cf_9',

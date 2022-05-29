@@ -1,9 +1,8 @@
+import pytest
+
 from app.update import normalize_bike_id
 
 
-def test_normalize_bike_id():
-    bike_title = 'Spectral 125 CF 9'
-
-    res = normalize_bike_id(bike_title)
-
-    assert res == 'spectral_125_cf_9'
+@pytest.mark.parametrize("test_input,expected", [("Spectral 125 CF 9", "spectral_125_cf_9"), ("", "")])
+def test_normalize_bike_id(test_input, expected):
+    assert normalize_bike_id(test_input) == expected
