@@ -1,4 +1,4 @@
-from app.update import _get_canyon_catalog
+from app.catalog_updater import _get_canyon_catalog
 from app.bike_model import Bike
 
 

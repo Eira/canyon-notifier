@@ -41,5 +41,9 @@ python -m app.catalog_updater
 ```
 poetry run flake8 app/
 ```
+### Lokal run MyPy
+```
+poetry run mypy app/
+```
 
 ### Check [production logs online](http://canyon.esemi.ru/)

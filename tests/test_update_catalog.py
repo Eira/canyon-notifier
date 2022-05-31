@@ -1,7 +1,7 @@
 from typing import List
 
 from app.bike_model import Bike
-from app.update import _update_catalog
+from app.catalog_updater import _update_catalog
 
 
 async def test_update_catalog_happy_path(fixture_prefilled_catalog: List[Bike]):

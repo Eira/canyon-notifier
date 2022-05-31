@@ -1,6 +1,6 @@
 import pytest
 
-from app.update import normalize_bike_id
+from app.catalog_updater import normalize_bike_id
 
 
 @pytest.mark.parametrize("test_input,expected", [("Spectral 125 CF 9", "spectral_125_cf_9"), ("", "")])
