@@ -1,6 +1,6 @@
 # canyon-notifier
 ---
-[![tests](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml)
+[![tests](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml)
 
 
 ### Pre-requirements
