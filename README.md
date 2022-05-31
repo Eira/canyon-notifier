@@ -34,7 +34,7 @@ $ pytest --cov=app
 
 ### Local run app
 ```
-python -m app.update 
+python -m app.catalog_updater
 ```
 
 ### Local run flake
