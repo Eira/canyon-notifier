@@ -1,6 +1,6 @@
 # canyon-notifier
 ---
-[![tests](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml)
+[![tests](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml)
 
 
 ### Pre-requirements
@@ -34,12 +34,16 @@ $ pytest --cov=app
 
 ### Local run app
 ```
-python -m app.update 
+python -m app.catalog_updater
 ```
 
 ### Local run flake
 ```
 poetry run flake8 app/
+```
+### Lokal run MyPy
+```
+poetry run mypy app/
 ```
 
 ### Check [production logs online](http://canyon.esemi.ru/)

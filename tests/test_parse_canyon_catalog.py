@@ -1,6 +1,6 @@
 from lxml import etree
 
-from app.update import _parse_canyon_catalog
+from app.catalog_updater import _parse_canyon_catalog
 from app.bike_model import Bike
 
 

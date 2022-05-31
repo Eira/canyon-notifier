@@ -1,4 +1,4 @@
-from app.update import main
+from app.catalog_updater import main
 
 
 async def test_main_happy_path():
