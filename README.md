@@ -56,16 +56,23 @@ CanyonNotifierTest
 ```
 CanyonNotifierTestBot
 ```
-
 ### Telegram test bot token to access the HTTP API
 ```
 5435048925:AAE0CdbhQL7baW-EZmtVZ0nbyNbEtCQWUcE
 ```
+### Local run Telegram bot
+```
+python -m app.bot
+```
+
 
 ### Check [production logs online](http://canyon.esemi.ru/)
 
 ```
-Done! Congratulations on your new bot. You will find it at t.me/CanyonNotifierTestBot. You can now add a description, about section and profile picture for your bot, see /help for a list of commands. By the way, when you've finished creating your cool bot, ping our Bot Support if you want a better username for it. Just make sure the bot is fully operational before you do this.
+Done! Congratulations on your new bot. You will find it at t.me/CanyonNotifierTestBot.
+You can now add a description, about section and profile picture for your bot, see /help for a list of commands.
+By the way, when you've finished creating your cool bot, ping our Bot Support if you want a better username for it.
+Just make sure the bot is fully operational before you do this.
 
 Use this token to access the HTTP API:
 5435048925:AAE0CdbhQL7baW-EZmtVZ0nbyNbEtCQWUcE

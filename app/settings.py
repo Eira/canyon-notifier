@@ -12,6 +12,7 @@ class AppSettings(BaseSettings):
     throttling_time: float = Field(600.0, description='время ожидания между обновлениями')
     debug: bool = Field(False, description='настройка уровня логирования')
     amount_of_iterations: int = Field(0, description='сколько раз будет запускаться воркер обновления каталога в фоне.')
+    bot_token: str = Field('5435048925:AAE0CdbhQL7baW-EZmtVZ0nbyNbEtCQWUcE', description='Токен для телеграм бота')
 
 
 app_settings = AppSettings(
