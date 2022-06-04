@@ -14,6 +14,7 @@ $ cd canyon-notifier
 $ python3.9 -m venv venv
 $ source venv/bin/activate
 $ pip install -U poetry pip setuptools
+$ poetry config virtualenvs.create false --local
 $ poetry install
 ```
 
