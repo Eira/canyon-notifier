@@ -1,5 +1,6 @@
 """
 This is the canyon new bikes bot.
+
 It answers to any incoming text messages with the list of all commands.
 """
 
@@ -18,23 +19,25 @@ dp = Dispatcher(bot)
 
 
 @dp.message_handler(commands=['start', 'help'])
-async def send_welcome(message: types.Message):
-    """ This handler will be called when user sends `/start` or `/help` command."""
-
-    await message.answer(
-        "Hi, friend!\n"
-        "I will show you which canyon bicycles are available in the store.\n"
-        "/all - to see all catalog."
-    )
+async def send_welcome(message: types.Message) -> None:
+    """Greeting user when user sends `/start` or `/help` command."""
+    answer_text: str = """
+        Hi, friend!
+I will show you which canyon bicycles are available in the store.
+/all - to see all catalog.
+    """
+    await message.answer(answer_text)
 
 
 @dp.message_handler()
-async def echo(message: types.Message):
-    await message.reply(
-        "Use one of the following commands:\n"
-        "/start - welcome\n"
-        "/help - list of all commands\n"
-    )
+async def echo(message: types.Message) -> None:
+    """Return the list of all commands to any unknown command."""
+    reply_test: str = """
+        Use one of the following commands:
+/start - welcome
+/help - list of all commands
+    """
+    await message.reply(reply_test)
 
 
 if __name__ == '__main__':

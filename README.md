@@ -45,7 +45,7 @@ poetry run flake8 app/
 ```
 ### Local run MyPy
 ```
-poetry run myspy app/
+poetry run mypy app/
 ```
 
 ### Telegram test bot name
