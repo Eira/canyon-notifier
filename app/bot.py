@@ -10,37 +10,42 @@ from aiogram import Bot, Dispatcher, executor, types
 
 from app.settings import app_settings
 
-API_TOKEN = app_settings.bot_token
 
-
-# Initialize bot and dispatcher
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
-
-
-@dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message) -> None:
     """Greeting user when user sends `/start` or `/help` command."""
-    answer_text: str = """
-        Hi, friend!
-I will show you which canyon bicycles are available in the store.
-/all - to see all catalog.
-    """
-    await message.answer(answer_text)
+    answer = '\n'.join((
+        'Hi, friend!',
+        'I will show you which canyon bicycles are available in the store.',
+        '/all - to see all catalog.',
+    ))
+
+    await message.answer(answer)
 
 
-@dp.message_handler()
-async def echo(message: types.Message) -> None:
+async def wrong_command_helper(message: types.Message) -> None:
     """Return the list of all commands to any unknown command."""
-    reply_test: str = """
-        Use one of the following commands:
-/start - welcome
-/help - list of all commands
-    """
-    await message.reply(reply_test)
+    reply = '\n'.join((
+        'Use one of the following commands:',
+        '/start - welcome',
+        '/help - list of all commands',
+    ))
+    await message.reply(reply)
+
+
+def main() -> None:
+    """Telegram bot app runner."""
+    bot = Bot(token=app_settings.bot_token)
+
+    router = Dispatcher(bot)
+    router.register_message_handler(send_welcome, commands=['start', 'help'])
+    router.register_message_handler(wrong_command_helper)
+    executor.start_polling(router, skip_updates=True)
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.DEBUG if app_settings.debug else logging.INFO,
+        format='%(asctime)s %(levelname)-8s %(message)s',  # noqa: WPS323
+    )
 
-    executor.start_polling(dp, skip_updates=True)
+    main()
