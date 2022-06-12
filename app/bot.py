@@ -13,13 +13,13 @@ from app.settings import app_settings
 
 async def send_welcome(message: types.Message) -> None:
     """Greeting user when user sends `/start` or `/help` command."""
-    answer = '\n'.join((
+    answer_text = '\n'.join((
         'Hi, friend!',
         'I will show you which canyon bicycles are available in the store.',
         '/all - to see all catalog.',
     ))
 
-    await message.answer(answer)
+    await message.answer(answer_text)
 
 
 async def wrong_command_helper(message: types.Message) -> None:
