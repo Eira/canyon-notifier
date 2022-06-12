@@ -1,4 +1,6 @@
-# canyon-notifier
+# Canyon notifier telegram bot
+[CanyonNotifier](https://t.me/CanyonNotifierBot)
+
 ---
 [![tests](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml)
 
@@ -25,6 +27,7 @@ throttling_time=10.0
 debug=true
 redis_dsn= redis://localhost:6379/1
 amount_of_iterations=2
+bot_token=5435048925:AAE0CdbhQL7baW-EZmtVZ0nbyNbEtCQWUcE
 EOF
 ```
 
@@ -42,9 +45,15 @@ python -m app.catalog_updater
 ```
 poetry run flake8 app/
 ```
-### Lokal run MyPy
+### Local run MyPy
 ```
 poetry run mypy app/
 ```
 
-### Check [production logs online](http://canyon.esemi.ru/)
+### Local run Telegram bot
+```
+python -m app.bot
+```
+
+
+
