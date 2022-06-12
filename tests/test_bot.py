@@ -39,5 +39,3 @@ def test_bot_main_smoke(mocker):
 
     assert res is None
     assert mock.call_count == 1
-
-# TODO перенести тесты в каталог апдейт
