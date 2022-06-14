@@ -16,7 +16,7 @@ async def send_welcome(message: types.Message) -> None:
     answer_text = '\n'.join((
         'Hi, friend!',
         'I will show you which canyon bicycles are available in the store.',
-        '/all - to see all catalog.',
+        '/catalog - to see all catalog.',
     ))
 
     await message.answer(answer_text)
@@ -28,8 +28,17 @@ async def wrong_command_helper(message: types.Message) -> None:
         'Use one of the following commands:',
         '/start - welcome',
         '/help - list of all commands',
+        '/catalog - list of all available bicycles',
     ))
     await message.reply(reply)
+
+
+async def show_catalog(message: types.Message) -> None:
+    # todo happy path tests ?
+    """Return the list of all available bicycles"""
+
+    answer_test = 'catalog'
+    await message.answer(answer_test)
 
 
 def main() -> None:
@@ -38,6 +47,7 @@ def main() -> None:
 
     router = Dispatcher(bot)
     router.register_message_handler(send_welcome, commands=['start', 'help'])
+    router.register_message_handler(show_catalog, commands=['catalog'])
     router.register_message_handler(wrong_command_helper)
     executor.start_polling(router, skip_updates=True)
 

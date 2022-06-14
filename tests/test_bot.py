@@ -1,6 +1,6 @@
 from unittest.mock import AsyncMock
 
-from app.bot import send_welcome, wrong_command_helper, main
+from app.bot import send_welcome, wrong_command_helper, main, show_catalog
 
 
 async def test_bot_send_welcome_smoke():
@@ -28,6 +28,14 @@ async def test_wrong_command_helper_smoke():
     message_mock = AsyncMock()
 
     await wrong_command_helper(message_mock)
+
+    assert True
+
+
+async def test_show_catalog_smoke():
+    message_mock = AsyncMock()
+
+    await show_catalog(message_mock)
 
     assert True
 
