@@ -40,7 +40,6 @@ async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
 
 
 async def get_catalog() -> List[Bike]:
-    # todo test happy path
     """Get actual catalog from the database. Return list of bikes in elements."""
     list_bike_id = await db_pool.smembers(ACTUAL_CATALOG_KEY)
 
