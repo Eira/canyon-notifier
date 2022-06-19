@@ -9,6 +9,7 @@ import logging
 from aiogram import Bot, Dispatcher, executor, types
 
 from app.settings import app_settings
+from app.storage import get_catalog
 
 
 async def send_welcome(message: types.Message) -> None:
@@ -37,7 +38,7 @@ async def show_catalog(message: types.Message) -> None:
     # todo happy path tests ?
     """Return the list of all available bicycles"""
 
-    answer_test = 'catalog'
+    answer_test = await get_catalog()
     await message.answer(answer_test)
 
 
