@@ -45,10 +45,8 @@ async def get_catalog() -> List[Bike]:
 
     output: List[Bike] = []
     for bike_id in list_bike_id:
-        db_bike_item = await db_pool.hgetall(BIKE_KEY.format(bike_id))
-
         bike_item: Bike = Bike(
-            **db_bike_item,
+            **await db_pool.hgetall(BIKE_KEY.format(bike_id)),
         )
         output.append(bike_item)
 

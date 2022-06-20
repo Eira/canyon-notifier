@@ -25,17 +25,6 @@ async def send_welcome(message: types.Message) -> None:
     await message.answer(answer_text)
 
 
-async def wrong_command_helper(message: types.Message) -> None:
-    """Return the list of all commands to any unknown command."""
-    reply = '\n'.join((
-        'Use one of the following commands:',
-        '/start - welcome',
-        '/help - list of all commands',
-        '/catalog - list of all available bicycles',
-    ))
-    await message.reply(reply)
-
-
 def chunks(chunkable_list: list, chunk_size: int) -> Generator:
     """Yield successive n-sized chunks from lst."""
     yield from (
@@ -45,18 +34,13 @@ def chunks(chunkable_list: list, chunk_size: int) -> Generator:
 
 
 async def show_catalog(message: types.Message) -> None:
-    # todo happy path tests ?
     """Return the list of all available bicycles."""
     catalog = await get_catalog()
-    bike_as_str_list = []
-    for bike in catalog:
-        bike_as_str_list.append(hlink(bike.title, bike.link))
+    bike_as_str_list = [hlink(bike.title, bike.link) for bike in catalog]
 
     for bikes_chunks in chunks(bike_as_str_list, app_settings.telegram_max_entities):
-        answer_text = '\n'.join(bikes_chunks)
-
         await message.answer(
-            answer_text,
+            '\n'.join(bikes_chunks),
             parse_mode='HTML',
             disable_web_page_preview=True,
         )
@@ -69,7 +53,6 @@ def main() -> None:
     router = Dispatcher(bot)
     router.register_message_handler(send_welcome, commands=['start', 'help'])
     router.register_message_handler(show_catalog, commands=['catalog'])
-    router.register_message_handler(wrong_command_helper)
     executor.start_polling(router, skip_updates=True)
 
 
