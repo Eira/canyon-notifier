@@ -44,14 +44,12 @@ async def get_catalog() -> List[Bike]:
     list_bike_id = await db_pool.smembers(ACTUAL_CATALOG_KEY)
 
     output: List[Bike] = []
-    for i in list_bike_id:
-        db_bike_item = await db_pool.hgetall(BIKE_KEY.format(i))
+    for bike_id in list_bike_id:
+        db_bike_item = await db_pool.hgetall(BIKE_KEY.format(bike_id))
 
         bike_item: Bike = Bike(
-            **db_bike_item
+            **db_bike_item,
         )
         output.append(bike_item)
 
-    output = sorted(output, key=lambda bike: bike.id)
-    print(output)
-    return output
+    return sorted(output, key=lambda bike: bike.id)

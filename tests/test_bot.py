@@ -15,7 +15,7 @@ async def test_bot_send_welcome_happy_path():
     text_mock = '\n'.join((
         'Hi, friend!',
         'I will show you which canyon bicycles are available in the store.',
-        '/all - to see all catalog.',
+        '/catalog - to see all catalog.',
     ))
     message_mock = AsyncMock()
 
