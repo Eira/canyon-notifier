@@ -13,6 +13,7 @@ class AppSettings(BaseSettings):
     debug: bool = Field(False, description='настройка уровня логирования')
     amount_of_iterations: int = Field(0, description='сколько раз будет запускаться воркер обновления каталога в фоне.')
     bot_token: str
+    telegram_max_entities: int = Field(50, description='количество ссылок в  одном сообщении телеграм бота.')
 
 
 app_settings = AppSettings(

@@ -1,21 +1,14 @@
 from unittest.mock import AsyncMock
 
-from app.bot import send_welcome, wrong_command_helper, main
-
-
-async def test_bot_send_welcome_smoke():
-    message_mock = AsyncMock()
-
-    await send_welcome(message_mock)
-
-    assert True
+from app.bike_model import Bike
+from app.bot import send_welcome, main, show_catalog
 
 
 async def test_bot_send_welcome_happy_path():
     text_mock = '\n'.join((
         'Hi, friend!',
         'I will show you which canyon bicycles are available in the store.',
-        '/all - to see all catalog.',
+        '/catalog - to see all catalog.',
     ))
     message_mock = AsyncMock()
 
@@ -24,12 +17,23 @@ async def test_bot_send_welcome_happy_path():
     message_mock.answer.assert_called_with(text_mock)
 
 
-async def test_wrong_command_helper_smoke():
+async def test_show_catalog_smoke():
     message_mock = AsyncMock()
 
-    await wrong_command_helper(message_mock)
+    await show_catalog(message_mock)
 
     assert True
+
+
+async def test_show_catalog_happy_path(fixture_prefilled_catalog):
+    message_mock = AsyncMock()
+    expected_res = '<a href="https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC">Exceed CF 7</a>'
+
+    await show_catalog(message_mock)
+
+    res = message_mock.answer.call_args[0][0]
+    assert message_mock.answer.call_count == 1
+    assert expected_res in res
 
 
 def test_bot_main_smoke(mocker):

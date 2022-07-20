@@ -41,8 +41,13 @@ async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
 
 async def get_catalog() -> List[Bike]:
     """Get actual catalog from the database. Return list of bikes in elements."""
-    # взять все названия байков из сета ACTUAL_CATALOG_KEY
-    # для каждого имени байка найти данные из хешмапы
-    # форматировать в список байков
+    list_bike_id = await db_pool.smembers(ACTUAL_CATALOG_KEY)
 
-    return []
+    output: List[Bike] = []
+    for bike_id in list_bike_id:
+        bike_item: Bike = Bike(
+            **await db_pool.hgetall(BIKE_KEY.format(bike_id)),
+        )
+        output.append(bike_item)
+
+    return sorted(output, key=lambda bike: bike.id)
