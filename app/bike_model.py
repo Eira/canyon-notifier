@@ -10,3 +10,5 @@ class Bike:
     id: str
     title: str
     link: str
+    family: str
+    model: str

@@ -1,15 +1,17 @@
 """
-This is the canyon new bikes bot.
+This is the canyon new bike's bot.
 
 It answers to any incoming text messages with the list of all commands.
 """
-
+import itertools
 import logging
-from typing import Generator
+from itertools import groupby
+from typing import Generator, List, Tuple
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.markdown import hlink
 
+from app.bike_model import Bike
 from app.settings import app_settings
 from app.storage import get_catalog
 
@@ -35,12 +37,19 @@ def chunks(chunkable_list: list, chunk_size: int) -> Generator:
 
 async def show_catalog(message: types.Message) -> None:
     """Return the list of all available bicycles."""
-    catalog = await get_catalog()
-    bike_as_str_list = [hlink(bike.title, bike.link) for bike in catalog]
+    catalog: List[Bike] = await get_catalog()
 
-    for bikes_chunks in chunks(bike_as_str_list, app_settings.telegram_max_entities):
+    catalog_family_group: List[Tuple[str, List[Bike]]] = []
+    for key, group in groupby(catalog, lambda x: x.family):
+        catalog_family_group.append((key, list(group)))
+
+    for bikes_chunks in catalog_family_group:
+        bike_family_name = bikes_chunks[0]  # магическое число?
+        bike_model_link_list = [hlink(bike.model, bike.link) for bike in bikes_chunks[1]]
+        bike_answer = [bike_family_name] + bike_model_link_list
+
         await message.answer(
-            '\n'.join(bikes_chunks),
+            '\n'.join(bike_answer),
             parse_mode='HTML',
             disable_web_page_preview=True,
         )

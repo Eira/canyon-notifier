@@ -258,6 +258,8 @@ or from 19.383,17 CZK/Mo.
     assert res[0].id == 'speedmax_cf_8_disc'
     assert res[0].title == 'Speedmax CF 8 Disc'
     assert res[0].link == 'https://www.canyon.com/en-cz/road-bikes/triathlon-bikes/speedmax/cf/speedmax-cf-8-disc/3059.html?dwvar_3059_pv_rahmenfarbe=YE%2FBK'
+    assert res[0].family == 'Speedmax'
+    assert res[0].model == 'CF 8 Disc'
 
 
 def test_parse_canyon_catalog_few_bikes():
@@ -998,6 +1000,12 @@ or from 25.566,50 CZK/Mo.
     assert res[0].link == 'https://www.canyon.com/en-cz/road-bikes/triathlon-bikes/speedmax/cf/speedmax-cf-8-disc/3059.html?dwvar_3059_pv_rahmenfarbe=YE%2FBK'
     assert res[1].link == 'https://www.canyon.com/en-cz/road-bikes/triathlon-bikes/speedmax/cf/speedmax-cf-7-disc/3058.html?dwvar_3058_pv_rahmenfarbe=BK%2FSR'
     assert res[2].link == 'https://www.canyon.com/en-cz/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR'
+    assert res[0].family == 'Speedmax'
+    assert res[1].family == 'Speedmax'
+    assert res[2].family == 'Spectral'
+    assert res[0].model == 'CF 8 Disc'
+    assert res[1].model == 'CF 7 Disc'
+    assert res[2].model == '125 CF 9'
 
 
 def test_parse_canyon_catalog_not_found():

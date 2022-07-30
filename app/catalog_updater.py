@@ -52,6 +52,8 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
             id=normalize_bike_id(bike_name_element.get('title')),
             title=bike_name_element.get('title'),
             link=bike_name_element.get('href'),
+            family=bike_name_element.get('title').partition(' ')[0],
+            model=bike_name_element.get('title').partition(' ')[2],
         )
         output.append(bike_item)
 
