@@ -43,9 +43,8 @@ async def show_catalog(message: types.Message) -> None:
     for key, group in groupby(catalog, lambda x: x.family):
         catalog_family_group.append((key, list(group)))
 
-    for bikes_chunks in catalog_family_group:
-        bike_family_name = bikes_chunks[0]  # магическое число?
-        bike_model_link_list = [hlink(bike.model, bike.link) for bike in bikes_chunks[1]]
+    for bike_family_name, bikes in catalog_family_group:
+        bike_model_link_list = [hlink(bike.model, bike.link) for bike in bikes]
         bike_answer = [bike_family_name] + bike_model_link_list
 
         await message.answer(

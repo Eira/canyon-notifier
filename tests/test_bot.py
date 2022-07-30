@@ -1,6 +1,5 @@
 from unittest.mock import AsyncMock
 
-from app.bike_model import Bike
 from app.bot import send_welcome, main, show_catalog
 
 

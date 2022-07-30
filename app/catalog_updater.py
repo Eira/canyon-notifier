@@ -48,12 +48,21 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
 
     for list_item in html_bike_list:
         bike_name_element: etree.Element = list_item.cssselect('.productTile__link')[0]
+
+        bike_title_list = bike_name_element.get('title').split(' ')
+        if bike_name_element.get('title').startswith('Grand Canyon'):
+            bike_family = f"{bike_title_list[0]} {bike_title_list[1]}"
+            bike_model = " ".join(bike_title_list[2:])
+        else:
+            bike_family = bike_title_list[0]
+            bike_model = " ".join(bike_title_list[1:])
+
         bike_item: Bike = Bike(
             id=normalize_bike_id(bike_name_element.get('title')),
             title=bike_name_element.get('title'),
             link=bike_name_element.get('href'),
-            family=bike_name_element.get('title').partition(' ')[0],
-            model=bike_name_element.get('title').partition(' ')[2],
+            family=bike_family,
+            model=bike_model,
         )
         output.append(bike_item)
 
