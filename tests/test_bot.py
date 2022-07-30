@@ -26,12 +26,12 @@ async def test_show_catalog_smoke():
 
 async def test_show_catalog_happy_path(fixture_prefilled_catalog):
     message_mock = AsyncMock()
-    expected_res = '<a href="https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC">Exceed CF 7</a>'
+    expected_res = 'Spectral\n<a href="https://www.canyon.com/en-cz/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR">125 CF 9</a>'
 
     await show_catalog(message_mock)
 
     res = message_mock.answer.call_args[0][0]
-    assert message_mock.answer.call_count == 1
+    assert message_mock.answer.call_count == 2
     assert expected_res in res
 
 

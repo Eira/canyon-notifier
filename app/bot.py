@@ -3,15 +3,14 @@ This is the canyon new bike's bot.
 
 It answers to any incoming text messages with the list of all commands.
 """
-import itertools
 import logging
 from itertools import groupby
-from typing import Generator, List, Tuple
+from typing import Generator, List
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.markdown import hlink
 
-from app.bike_model import Bike
+from app.bike_model import Bike, CatalogFamily
 from app.settings import app_settings
 from app.storage import get_catalog
 
@@ -35,17 +34,23 @@ def chunks(chunkable_list: list, chunk_size: int) -> Generator:
     )
 
 
-async def show_catalog(message: types.Message) -> None:
+async def show_catalog(message: types.Message) -> None:  # noqa: WPS210
     """Return the list of all available bicycles."""
     catalog: List[Bike] = await get_catalog()
 
-    catalog_family_group: List[Tuple[str, List[Bike]]] = []
-    for key, group in groupby(catalog, lambda x: x.family):
-        catalog_family_group.append((key, list(group)))
+    catalog_family_group: List[CatalogFamily] = [
+        CatalogFamily(
+            family=key,
+            bike_list=list(group),
+        )
+        for key, group in groupby(catalog, lambda bike: bike.family)
+    ]
 
-    for bike_family_name, bikes in catalog_family_group:
-        bike_model_link_list = [hlink(bike.model, bike.link) for bike in bikes]
-        bike_answer = [bike_family_name] + bike_model_link_list
+    for catalog_family in catalog_family_group:
+        bike_answer = [catalog_family.family] + [
+            hlink(bike.model, bike.link)
+            for bike in catalog_family.bike_list
+        ]
 
         await message.answer(
             '\n'.join(bike_answer),

@@ -40,7 +40,7 @@ def normalize_bike_id(bike_title: str) -> str:
     return bike_title.replace(' ', '_').lower()
 
 
-def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437
+def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437, WPS210
     """Make the list of bike elements from HTML. Return list of bikes in elements."""
     output: List[Bike] = []
 
@@ -51,11 +51,11 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
 
         bike_title_list = bike_name_element.get('title').split(' ')
         if bike_name_element.get('title').startswith('Grand Canyon'):
-            bike_family = f"{bike_title_list[0]} {bike_title_list[1]}"
-            bike_model = " ".join(bike_title_list[2:])
+            bike_family = f'{bike_title_list[0]} {bike_title_list[1]}'
+            bike_model = ' '.join(bike_title_list[2:])
         else:
             bike_family = bike_title_list[0]
-            bike_model = " ".join(bike_title_list[1:])
+            bike_model = ' '.join(bike_title_list[1:])
 
         bike_item: Bike = Bike(
             id=normalize_bike_id(bike_name_element.get('title')),
