@@ -8,11 +8,18 @@ from itertools import groupby
 from typing import Generator, List
 
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils.markdown import hlink
 
 from app.bike_model import Bike, CatalogFamily
 from app.settings import app_settings
 from app.storage import get_catalog
+
+
+class SubscribeBikeFamilyName(StatesGroup):
+    family_name = State()  # Will be represented in storage as 'Form:name'
 
 
 async def send_welcome(message: types.Message) -> None:
@@ -21,6 +28,9 @@ async def send_welcome(message: types.Message) -> None:
         'Hi, friend!',
         'I will show you which canyon bicycles are available in the store.',
         '/catalog - to see all catalog.',
+        '/subscribe - to get the message, when the bike family you want in the stock.',
+        '/unsubscribe - not to receive messages about bike family.',
+        '/subscriptions_list - check if you waiting for any messages.',
     ))
 
     await message.answer(answer_text)
@@ -59,13 +69,58 @@ async def show_catalog(message: types.Message) -> None:  # noqa: WPS210
         )
 
 
+async def start_subscription(message: types.Message) -> None:
+    """Ask a bike family name."""
+    await SubscribeBikeFamilyName.family_name.set()
+    await message.reply('Please, write the bike family name.When it will be available we will let you know!')
+
+
+async def cancel_subscription(message: types.Message, state: FSMContext):
+    """Allow user to cancel action via /cancel command"""
+
+    current_state = await state.get_state()
+    if current_state is None:
+        return
+
+    await state.finish()
+    await message.reply('Cancelled.')
+
+
+async def process_subscription(message: types.Message, state: FSMContext) -> None:
+    """Create the subscription."""
+
+    await state.finish()
+    await message.reply(f'Got it! When "{message.text}" will be available we will let you know!')
+
+
+# Todo может и не пригодится
+async def remove_subscription(message: types.Message) -> None:
+    """Ask a bike family name and delete it from subscription list."""
+    answer_text = '\n'.join((
+        'Please, write the bike family name you dont want to have messages about.',
+    ))
+
+    await message.answer(answer_text)
+
+
+async def show_subscriptions(message: types.Message) -> None:
+    """Shows all subscriptions."""
+    ...
+
+
 def main() -> None:
     """Telegram bot app runner."""
     bot = Bot(token=app_settings.bot_token)
+    storage = MemoryStorage()
 
-    router = Dispatcher(bot)
+    router = Dispatcher(bot, storage=storage)
     router.register_message_handler(send_welcome, commands=['start', 'help'])
     router.register_message_handler(show_catalog, commands=['catalog'])
+    router.register_message_handler(start_subscription, commands=['subscribe'])
+    router.register_message_handler(cancel_subscription, state='*', commands=['cancel'])
+    router.register_message_handler(process_subscription, state=SubscribeBikeFamilyName.family_name)
+    router.register_message_handler(remove_subscription, commands=['unsubscribe'])
+    router.register_message_handler(show_subscriptions, commands=['subscriptions_list'])
     executor.start_polling(router, skip_updates=True)
 
 
