@@ -7,19 +7,30 @@ import logging
 from itertools import groupby
 from typing import Generator, List
 
+import aioredis
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils.markdown import hlink
 
-from app.bike_model import Bike, CatalogFamily
+from app.bike_model import Bike, CatalogFamily, SubscribeBikeFamily
 from app.settings import app_settings
 from app.storage import get_catalog
 
 
 class SubscribeBikeFamilyName(StatesGroup):
-    family_name = State()  # Will be represented in storage as 'Form:name'
+    family_name = State()
+
+
+db_pool: aioredis.Redis = aioredis.from_url(
+    app_settings.redis_dsn,
+    encoding='utf-8',
+    decode_responses=True,
+)
+
+
+SUBSCRIPTION_KEY = 'canyon-notifier:subscription:id_incr'
 
 
 async def send_welcome(message: types.Message) -> None:
@@ -87,7 +98,13 @@ async def cancel_subscription(message: types.Message, state: FSMContext):
 
 
 async def process_subscription(message: types.Message, state: FSMContext) -> None:
+    # Todo make a test
     """Create the subscription."""
+    subscription_item: SubscribeBikeFamily = SubscribeBikeFamily(
+        subscribe_id=await db_pool.incr(SUBSCRIPTION_KEY),
+        chat_id=message.chat.id,
+        bike_family=message.text,
+    )
 
     await state.finish()
     await message.reply(f'Got it! When "{message.text}" will be available we will let you know!')
@@ -131,3 +148,13 @@ if __name__ == '__main__':
     )
 
     main()
+
+
+# у каждой подписки индивид id
+# создать ключ в ктором хранится список всех айдишек подписок
+# берем список айдишек
+# перебираем эти значения и получаем объекты подписок
+# в объектах подписок находим нужные имена байков
+# и берем id и отправляем ему сообщение
+
+# погуглить автоинкрементную айди редис
