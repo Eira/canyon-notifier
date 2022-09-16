@@ -5,12 +5,14 @@ from typing import List
 
 import aioredis
 
-from app.bike_model import Bike
+from app.bike_model import Bike, SubscribeBikeFamily
 from app.settings import app_settings
 
 BIKE_KEY = 'canyon-notifier:bike:{0}'
 ACTUAL_CATALOG_KEY = 'canyon-notifier:catalog'
 CATALOG_UPDATE_DATE_KEY = 'canyon-notifier:catalog:last_update_date'
+SUBSCRIPTION_ID_INCR_KEY = 'canyon-notifier:subscription:id_incr'
+SUBSCRIPTION_KEY = 'canyon-notifier:subscription:{0}'
 
 db_pool: aioredis.Redis = aioredis.from_url(
     app_settings.redis_dsn,
@@ -51,3 +53,16 @@ async def get_catalog() -> List[Bike]:
         output.append(bike_item)
 
     return sorted(output, key=lambda bike: bike.id)
+
+
+async def create_subscription(chat_id: int, bike_family: str) -> SubscribeBikeFamily:
+    # Todo test
+    subscription_item = SubscribeBikeFamily(
+        subscribe_id=await db_pool.incr(SUBSCRIPTION_ID_INCR_KEY),
+        chat_id=chat_id,
+        bike_family=bike_family,
+    )
+
+    await db_pool.hset(SUBSCRIPTION_KEY.format(subscription_item.subscribe_id), mapping=asdict(subscription_item))
+
+    return subscription_item

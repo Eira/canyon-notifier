@@ -4,6 +4,7 @@ This is the canyon new bike's bot.
 It answers to any incoming text messages with the list of all commands.
 """
 import logging
+from dataclasses import asdict
 from itertools import groupby
 from typing import Generator, List
 
@@ -16,7 +17,7 @@ from aiogram.utils.markdown import hlink
 
 from app.bike_model import Bike, CatalogFamily, SubscribeBikeFamily
 from app.settings import app_settings
-from app.storage import get_catalog
+from app.storage import get_catalog, create_subscription
 
 
 class SubscribeBikeFamilyName(StatesGroup):
@@ -28,9 +29,6 @@ db_pool: aioredis.Redis = aioredis.from_url(
     encoding='utf-8',
     decode_responses=True,
 )
-
-
-SUBSCRIPTION_KEY = 'canyon-notifier:subscription:id_incr'
 
 
 async def send_welcome(message: types.Message) -> None:
@@ -81,12 +79,14 @@ async def show_catalog(message: types.Message) -> None:  # noqa: WPS210
 
 
 async def start_subscription(message: types.Message) -> None:
+    # todo test
     """Ask a bike family name."""
     await SubscribeBikeFamilyName.family_name.set()
     await message.reply('Please, write the bike family name.When it will be available we will let you know!')
 
 
 async def cancel_subscription(message: types.Message, state: FSMContext):
+    # todo test
     """Allow user to cancel action via /cancel command"""
 
     current_state = await state.get_state()
@@ -100,14 +100,11 @@ async def cancel_subscription(message: types.Message, state: FSMContext):
 async def process_subscription(message: types.Message, state: FSMContext) -> None:
     # Todo make a test
     """Create the subscription."""
-    subscription_item: SubscribeBikeFamily = SubscribeBikeFamily(
-        subscribe_id=await db_pool.incr(SUBSCRIPTION_KEY),
-        chat_id=message.chat.id,
-        bike_family=message.text,
-    )
+
+    created_subscription: SubscribeBikeFamily = await create_subscription(message.chat.id, message.text)
 
     await state.finish()
-    await message.reply(f'Got it! When "{message.text}" will be available we will let you know!')
+    await message.reply(f'Got it! When "{created_subscription.bike_family}" will be available we will let you know!')
 
 
 # Todo может и не пригодится
