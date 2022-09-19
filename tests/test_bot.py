@@ -1,7 +1,7 @@
 from unittest.mock import AsyncMock
 
-import app.bot
-from app.bot import send_welcome, main, show_catalog, start_subscription
+import app.bot, app.storage
+from app.bot import send_welcome, main, show_catalog, start_subscription, process_subscription
 
 
 async def test_bot_send_welcome_happy_path():
@@ -52,6 +52,21 @@ async def test_start_subscription_smoke(mocker):
     message_mock = AsyncMock()
 
     await start_subscription(message=message_mock)
+
+    message_mock.reply.assert_called_with(text_mock)
+    assert mock.call_count == 1
+
+
+async def test_process_subscription_smoke(mocker):
+    message_mock = AsyncMock()
+    message_mock.chat.id = '123'
+    message_mock.text = 'Bike_test'
+    state_mock = AsyncMock()
+    mock = mocker.spy(app.bot, 'create_subscription')
+
+    text_mock = f'Got it! When "{message_mock.text}" will be available we will let you know!'
+
+    await process_subscription(message=message_mock, state=state_mock)
 
     message_mock.reply.assert_called_with(text_mock)
     assert mock.call_count == 1
