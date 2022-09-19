@@ -1,11 +1,11 @@
 from unittest.mock import AsyncMock
 
 import app.bot, app.storage
-from app.bot import send_welcome, main, show_catalog, start_subscription, process_subscription
+from app.bot import send_welcome, main, show_catalog, start_subscription, process_subscription, cancel_subscription
 
 
 async def test_bot_send_welcome_happy_path():
-    text_mock = '\n'.join((
+    expected_answer = '\n'.join((
         'Hi, friend!',
         'I will show you which canyon bicycles are available in the store.',
         '/catalog - to see all catalog.',
@@ -14,7 +14,8 @@ async def test_bot_send_welcome_happy_path():
 
     await send_welcome(message=message_mock)
 
-    message_mock.answer.assert_called_with(text_mock)
+    message_mock.answer.assert_called_with(expected_answer)
+
 
 
 async def test_show_catalog_smoke():
@@ -48,12 +49,12 @@ def test_bot_main_smoke(mocker):
 async def test_start_subscription_smoke(mocker):
     mock = mocker.patch('app.bot.SubscribeBikeFamilyName.family_name.set')
 
-    text_mock = 'Please, write the bike family name.When it will be available we will let you know!'
+    expected_reply = 'Please, write the bike family name.When it will be available we will let you know!'
     message_mock = AsyncMock()
 
     await start_subscription(message=message_mock)
 
-    message_mock.reply.assert_called_with(text_mock)
+    message_mock.reply.assert_called_with(expected_reply)
     assert mock.call_count == 1
 
 
@@ -64,9 +65,19 @@ async def test_process_subscription_smoke(mocker):
     state_mock = AsyncMock()
     mock = mocker.spy(app.bot, 'create_subscription')
 
-    text_mock = f'Got it! When "{message_mock.text}" will be available we will let you know!'
+    expected_reply = f'Got it! When "{message_mock.text}" will be available we will let you know!'
 
     await process_subscription(message=message_mock, state=state_mock)
 
-    message_mock.reply.assert_called_with(text_mock)
+    message_mock.reply.assert_called_with(expected_reply)
     assert mock.call_count == 1
+
+
+async def test_cancel_subscription_smoke():
+    message_mock = AsyncMock()
+    state_mock = AsyncMock()
+
+    await cancel_subscription(message=message_mock, state=state_mock)
+
+    message_mock.reply.assert_called_with('Cancelled.')
+    assert state_mock.finish.call_count == 1

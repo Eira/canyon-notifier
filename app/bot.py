@@ -76,7 +76,6 @@ async def start_subscription(message: types.Message) -> None:
 
 
 async def cancel_subscription(message: types.Message, state: FSMContext):
-    # todo test
     """Allow user to cancel action via /cancel command"""
 
     current_state = await state.get_state()
@@ -88,7 +87,6 @@ async def cancel_subscription(message: types.Message, state: FSMContext):
 
 
 async def process_subscription(message: types.Message, state: FSMContext) -> None:
-    # Todo make a test
     """Create the subscription."""
 
     created_subscription: SubscribeBikeFamily = await create_subscription(message.chat.id, message.text)
