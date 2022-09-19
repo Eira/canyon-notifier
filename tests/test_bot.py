@@ -1,6 +1,7 @@
 from unittest.mock import AsyncMock
 
-from app.bot import send_welcome, main, show_catalog
+import app.bot
+from app.bot import send_welcome, main, show_catalog, start_subscription
 
 
 async def test_bot_send_welcome_happy_path():
@@ -41,4 +42,16 @@ def test_bot_main_smoke(mocker):
     res = main()
 
     assert res is None
+    assert mock.call_count == 1
+
+
+async def test_start_subscription_smoke(mocker):
+    mock = mocker.patch('app.bot.SubscribeBikeFamilyName.family_name.set')
+
+    text_mock = 'Please, write the bike family name.When it will be available we will let you know!'
+    message_mock = AsyncMock()
+
+    await start_subscription(message=message_mock)
+
+    message_mock.reply.assert_called_with(text_mock)
     assert mock.call_count == 1

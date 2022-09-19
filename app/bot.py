@@ -4,11 +4,9 @@ This is the canyon new bike's bot.
 It answers to any incoming text messages with the list of all commands.
 """
 import logging
-from dataclasses import asdict
 from itertools import groupby
 from typing import Generator, List
 
-import aioredis
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
@@ -22,13 +20,6 @@ from app.storage import get_catalog, create_subscription
 
 class SubscribeBikeFamilyName(StatesGroup):
     family_name = State()
-
-
-db_pool: aioredis.Redis = aioredis.from_url(
-    app_settings.redis_dsn,
-    encoding='utf-8',
-    decode_responses=True,
-)
 
 
 async def send_welcome(message: types.Message) -> None:
@@ -79,7 +70,6 @@ async def show_catalog(message: types.Message) -> None:  # noqa: WPS210
 
 
 async def start_subscription(message: types.Message) -> None:
-    # todo test
     """Ask a bike family name."""
     await SubscribeBikeFamilyName.family_name.set()
     await message.reply('Please, write the bike family name.When it will be available we will let you know!')
@@ -119,6 +109,7 @@ async def remove_subscription(message: types.Message) -> None:
 
 async def show_subscriptions(message: types.Message) -> None:
     """Shows all subscriptions."""
+    # Todo вывереси список подписок (посмотреть на списке байков)
     ...
 
 
@@ -153,5 +144,3 @@ if __name__ == '__main__':
 # перебираем эти значения и получаем объекты подписок
 # в объектах подписок находим нужные имена байков
 # и берем id и отправляем ему сообщение
-
-# погуглить автоинкрементную айди редис
