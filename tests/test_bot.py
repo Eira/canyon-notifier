@@ -9,6 +9,7 @@ async def test_bot_send_welcome_happy_path():
         'Hi, friend!',
         'I will show you which canyon bicycles are available in the store.',
         '/catalog - to see all catalog.',
+        '/subscribe - to get the message, when the bike family you want in the stock.',
     ))
     message_mock = AsyncMock()
 
@@ -47,9 +48,11 @@ def test_bot_main_smoke(mocker):
 
 
 async def test_start_subscription_smoke(mocker):
-    mock = mocker.patch('app.bot.SubscribeBikeFamilyName.family_name.set')
-
-    expected_reply = 'Please, write the bike family name.When it will be available we will let you know!'
+    mock = mocker.patch('app.bot.CreateSubscription.family_name.set')
+    expected_reply = '\n'.join((
+        'Please, write the bike family name.When it will be available we will let you know!',
+        '/cancel - to cancel the action.',
+    ))
     message_mock = AsyncMock()
 
     await start_subscription(message=message_mock)
@@ -63,14 +66,14 @@ async def test_process_subscription_smoke(mocker):
     message_mock.chat.id = '123'
     message_mock.text = 'Bike_test'
     state_mock = AsyncMock()
-    mock = mocker.spy(app.bot, 'create_subscription')
+    mock_usage_counter = mocker.spy(app.bot, 'create_subscription')
 
     expected_reply = f'Got it! When "{message_mock.text}" will be available we will let you know!'
 
     await process_subscription(message=message_mock, state=state_mock)
 
     message_mock.reply.assert_called_with(expected_reply)
-    assert mock.call_count == 1
+    assert mock_usage_counter.call_count == 1
 
 
 async def test_cancel_subscription_smoke():

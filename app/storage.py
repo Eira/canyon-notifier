@@ -5,7 +5,7 @@ from typing import List
 
 import aioredis
 
-from app.bike_model import Bike, SubscribeBikeFamily
+from app.bike_model import Bike, SubscriptionBikeFamily
 from app.settings import app_settings
 
 BIKE_KEY = 'canyon-notifier:bike:{0}'
@@ -55,9 +55,9 @@ async def get_catalog() -> List[Bike]:
     return sorted(output, key=lambda bike: bike.id)
 
 
-async def create_subscription(chat_id: int, bike_family: str) -> SubscribeBikeFamily:
+async def create_subscription(chat_id: int, bike_family: str) -> SubscriptionBikeFamily:
     # Todo test
-    subscription_item = SubscribeBikeFamily(
+    subscription_item = SubscriptionBikeFamily(
         subscribe_id=await db_pool.incr(SUBSCRIPTION_ID_INCR_KEY),
         chat_id=chat_id,
         bike_family=bike_family,

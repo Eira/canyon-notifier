@@ -24,7 +24,7 @@ class CatalogFamily:
 
 
 @dataclass
-class SubscribeBikeFamily:
+class SubscriptionBikeFamily:
     """type of subscription with information about it."""
     subscribe_id: int
     chat_id: int

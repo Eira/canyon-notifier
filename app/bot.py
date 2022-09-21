@@ -13,12 +13,12 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils.markdown import hlink
 
-from app.bike_model import Bike, CatalogFamily, SubscribeBikeFamily
+from app.bike_model import Bike, CatalogFamily, SubscriptionBikeFamily
 from app.settings import app_settings
 from app.storage import get_catalog, create_subscription
 
 
-class SubscribeBikeFamilyName(StatesGroup):
+class CreateSubscription(StatesGroup):
     family_name = State()
 
 
@@ -29,8 +29,8 @@ async def send_welcome(message: types.Message) -> None:
         'I will show you which canyon bicycles are available in the store.',
         '/catalog - to see all catalog.',
         '/subscribe - to get the message, when the bike family you want in the stock.',
-        '/unsubscribe - not to receive messages about bike family.',
-        '/subscriptions_list - check if you waiting for any messages.',
+#        '/unsubscribe - not to receive messages about bike family.',
+#        '/subscriptions_list - check if you waiting for any messages.',
     ))
 
     await message.answer(answer_text)
@@ -71,8 +71,12 @@ async def show_catalog(message: types.Message) -> None:  # noqa: WPS210
 
 async def start_subscription(message: types.Message) -> None:
     """Ask a bike family name."""
-    await SubscribeBikeFamilyName.family_name.set()
-    await message.reply('Please, write the bike family name.When it will be available we will let you know!')
+    reply_text = '\n'.join((
+        'Please, write the bike family name.When it will be available we will let you know!',
+        '/cancel - to cancel the action.',
+    ))
+    await CreateSubscription.family_name.set()
+    await message.reply(reply_text)
 
 
 async def cancel_subscription(message: types.Message, state: FSMContext):
@@ -89,7 +93,7 @@ async def cancel_subscription(message: types.Message, state: FSMContext):
 async def process_subscription(message: types.Message, state: FSMContext) -> None:
     """Create the subscription."""
 
-    created_subscription: SubscribeBikeFamily = await create_subscription(message.chat.id, message.text)
+    created_subscription: SubscriptionBikeFamily = await create_subscription(message.chat.id, message.text)
 
     await state.finish()
     await message.reply(f'Got it! When "{created_subscription.bike_family}" will be available we will let you know!')
@@ -121,7 +125,7 @@ def main() -> None:
     router.register_message_handler(show_catalog, commands=['catalog'])
     router.register_message_handler(start_subscription, commands=['subscribe'])
     router.register_message_handler(cancel_subscription, state='*', commands=['cancel'])
-    router.register_message_handler(process_subscription, state=SubscribeBikeFamilyName.family_name)
+    router.register_message_handler(process_subscription, state=CreateSubscription.family_name)
     router.register_message_handler(remove_subscription, commands=['unsubscribe'])
     router.register_message_handler(show_subscriptions, commands=['subscriptions_list'])
     executor.start_polling(router, skip_updates=True)
@@ -134,11 +138,3 @@ if __name__ == '__main__':
     )
 
     main()
-
-
-# у каждой подписки индивид id
-# создать ключ в ктором хранится список всех айдишек подписок
-# берем список айдишек
-# перебираем эти значения и получаем объекты подписок
-# в объектах подписок находим нужные имена байков
-# и берем id и отправляем ему сообщение
