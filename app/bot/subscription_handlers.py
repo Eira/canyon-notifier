@@ -1,5 +1,5 @@
 """
-This is the module of canyon new bike's bot.
+This is the module of bot subscription handlers.
 
 It contains functions for create the subscription for the concrete model of the bike.
 """

@@ -57,7 +57,6 @@ async def get_catalog() -> List[Bike]:
 
 async def create_subscription(chat_id: int, bike_family: str) -> SubscriptionBikeFamily:
     """Get data from user in bot. Return the object of subscription."""
-    # Todo test
     subscription_item = SubscriptionBikeFamily(
         subscribe_id=await db_pool.incr(SUBSCRIPTION_ID_INCR_KEY),
         chat_id=chat_id,

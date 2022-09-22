@@ -1,7 +1,9 @@
 from unittest.mock import AsyncMock
 
-import app.bot, app.storage
-from app.bot import send_welcome, main, show_catalog, start_subscription, process_subscription, cancel_subscription
+import app.storage
+from app.bot.common_handlers import send_welcome, show_catalog
+from app.bot.subscription_handlers import start_subscription, process_subscription, cancel_subscription
+from app.bot_runner import main
 
 
 async def test_bot_send_welcome_happy_path():
@@ -38,7 +40,7 @@ async def test_show_catalog_happy_path(fixture_prefilled_catalog):
 
 
 def test_bot_main_smoke(mocker):
-    mock = mocker.patch('app.bot.executor.start_polling')
+    mock = mocker.patch('app.bot_runner.executor.start_polling')
 
     res = main()
 
@@ -47,7 +49,7 @@ def test_bot_main_smoke(mocker):
 
 
 async def test_start_subscription_smoke(mocker):
-    mock = mocker.patch('app.bot.CreateSubscription.family_name.set')
+    mock = mocker.patch('app.bot.subscription_handlers.CreateSubscription.family_name.set')
     expected_reply = '\n'.join((
         'Please, write the bike family name.When it will be available we will let you know!',
         '/cancel - to cancel the action.',
@@ -65,7 +67,7 @@ async def test_process_subscription_smoke(mocker):
     message_mock.chat.id = '123'
     message_mock.text = 'Bike_test'
     state_mock = AsyncMock()
-    mock_usage_counter = mocker.spy(app.bot_subscription, 'create_subscription')
+    mock_usage_counter = mocker.spy(app.bot.subscription_handlers, 'create_subscription')
 
     expected_reply = f'Got it! When "{message_mock.text}" will be available we will let you know!'
 
@@ -73,6 +75,7 @@ async def test_process_subscription_smoke(mocker):
 
     message_mock.reply.assert_called_with(expected_reply)
     assert mock_usage_counter.call_count == 1
+    assert state_mock.finish.call_count == 1
 
 
 async def test_cancel_subscription_smoke():
