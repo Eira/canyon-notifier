@@ -1,5 +1,5 @@
 """
-This is the module of canyon new bike's bot.
+This is the module of bot subscription handlers.
 
 It contains functions for create the subscription for the concrete model of the bike.
 """
@@ -43,19 +43,3 @@ async def process_subscription(message: types.Message, state: FSMContext) -> Non
 
     await state.finish()
     await message.reply(f'Got it! When "{created_subscription.bike_family}" will be available we will let you know!')
-
-
-# Todo может и не пригодится
-async def remove_subscription(message: types.Message) -> None:
-    """Ask a bike family name and delete it from subscription list."""
-    answer_text = '\n'.join((
-        'Please, write the bike family name you dont want to have messages about.',
-    ))
-
-    await message.answer(answer_text)
-
-
-async def show_subscriptions(message: types.Message) -> None:
-    """Take all users subscription and show all subscriptions."""
-    # Todo вывереси список подписок (посмотреть на списке байков)
-    ...
