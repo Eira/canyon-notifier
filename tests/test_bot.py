@@ -18,7 +18,6 @@ async def test_bot_send_welcome_happy_path():
     message_mock.answer.assert_called_with(expected_answer)
 
 
-
 async def test_show_catalog_smoke():
     message_mock = AsyncMock()
 
@@ -66,7 +65,7 @@ async def test_process_subscription_smoke(mocker):
     message_mock.chat.id = '123'
     message_mock.text = 'Bike_test'
     state_mock = AsyncMock()
-    mock_usage_counter = mocker.spy(app.bot, 'create_subscription')
+    mock_usage_counter = mocker.spy(app.bot_subscription, 'create_subscription')
 
     expected_reply = f'Got it! When "{message_mock.text}" will be available we will let you know!'
 
