@@ -53,9 +53,3 @@ async def remove_subscription(message: types.Message) -> None:
     ))
 
     await message.answer(answer_text)
-
-
-async def show_subscriptions(message: types.Message) -> None:
-    """Take all users subscription and show all subscriptions."""
-    # Todo вывереси список подписок (посмотреть на списке байков)
-    ...

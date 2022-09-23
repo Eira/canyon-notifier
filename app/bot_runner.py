@@ -23,7 +23,6 @@ def main() -> None:
         state=subscription_handlers.CreateSubscription.family_name,
     )
     router.register_message_handler(subscription_handlers.remove_subscription, commands=['unsubscribe'])
-    router.register_message_handler(subscription_handlers.show_subscriptions, commands=['subscriptions_list'])
     executor.start_polling(router, skip_updates=True)
 
 
