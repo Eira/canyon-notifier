@@ -64,5 +64,24 @@ async def create_subscription(chat_id: int, bike_family: str) -> SubscriptionBik
     )
 
     await db_pool.hset(SUBSCRIPTION_KEY.format(subscription_item.subscribe_id), mapping=asdict(subscription_item))
+    await db_pool.sadd(f"chat_id_{chat_id}", subscription_item.subscribe_id)  # todo test
 
     return subscription_item
+
+
+async def subscriptions_from_db(chat_id: int) -> List[SubscriptionBikeFamily]:
+    """Get all users subscriptions from db. Return it like the list of subscriptions items."""
+    # todo test
+    subscribe_id_list = await db_pool.smembers(f"chat_id_{chat_id}")
+    subscriptions_list = []
+
+    for subscribe_id in subscribe_id_list:
+        subscription = await db_pool.hgetall(SUBSCRIPTION_KEY.format(subscribe_id))
+        bike_family_item = SubscriptionBikeFamily(
+            subscribe_id=int(subscription['subscribe_id']),
+            chat_id=int(subscription['chat_id']),
+            bike_family=subscription['bike_family'],
+        )
+        subscriptions_list.append(bike_family_item)
+
+    return subscriptions_list

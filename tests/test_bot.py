@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock
 
 import app.storage
 from app.bot.common_handlers import send_welcome, show_catalog
-from app.bot.subscription_handlers import start_subscription, process_subscription, cancel_subscription
+from app.bot.subscription_handlers import start_subscription, process_subscription, cancel_subscription, show_subscriptions
 from app.bot_runner import main
 
 
@@ -86,3 +86,12 @@ async def test_cancel_subscription_smoke():
 
     message_mock.reply.assert_called_with('Cancelled.')
     assert state_mock.finish.call_count == 1
+
+
+async def test_show_subscriptions_happy_path():
+    # todo написать нормально может и тут фикстура нужна
+    message_mock = AsyncMock()
+
+    res = await show_subscriptions(message=message_mock)
+
+    assert res != 0

@@ -52,7 +52,7 @@ poetry run mypy app/
 
 ### Local run Telegram bot
 ```
-python -m app.bot
+python -m app.bot_runner
 ```
 
 
