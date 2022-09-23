@@ -21,3 +21,12 @@ class CatalogFamily:
 
     family: str
     bike_list: List[Bike]
+
+
+@dataclass
+class SubscriptionBikeFamily:
+    """type of subscription with information about it."""
+
+    subscribe_id: int
+    chat_id: int
+    bike_family: str

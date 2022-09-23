@@ -1,17 +1,12 @@
-"""
-This is the canyon new bike's bot.
+"""List of common bot handlers."""
 
-It answers to any incoming text messages with the list of all commands.
-"""
-import logging
 from itertools import groupby
 from typing import Generator, List
 
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import types
 from aiogram.utils.markdown import hlink
 
 from app.bike_model import Bike, CatalogFamily
-from app.settings import app_settings
 from app.storage import get_catalog
 
 
@@ -21,6 +16,9 @@ async def send_welcome(message: types.Message) -> None:
         'Hi, friend!',
         'I will show you which canyon bicycles are available in the store.',
         '/catalog - to see all catalog.',
+        '/subscribe - to get the message, when the bike family you want in the stock.',
+        # '/unsubscribe - not to receive messages about bike family.',
+        # '/subscriptions_list - check if you waiting for any messages.',
     ))
 
     await message.answer(answer_text)
@@ -57,22 +55,3 @@ async def show_catalog(message: types.Message) -> None:  # noqa: WPS210
             parse_mode='HTML',
             disable_web_page_preview=True,
         )
-
-
-def main() -> None:
-    """Telegram bot app runner."""
-    bot = Bot(token=app_settings.bot_token)
-
-    router = Dispatcher(bot)
-    router.register_message_handler(send_welcome, commands=['start', 'help'])
-    router.register_message_handler(show_catalog, commands=['catalog'])
-    executor.start_polling(router, skip_updates=True)
-
-
-if __name__ == '__main__':
-    logging.basicConfig(
-        level=logging.DEBUG if app_settings.debug else logging.INFO,
-        format='%(asctime)s %(levelname)-8s %(message)s',  # noqa: WPS323
-    )
-
-    main()
