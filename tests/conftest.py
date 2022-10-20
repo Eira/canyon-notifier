@@ -4,7 +4,7 @@ from typing import List
 import pytest
 
 from app.bike_model import Bike, SubscriptionBikeFamily
-from app.storage import clear_catalog, insert_actual_catalog, create_subscription
+from app.storage import clear_catalog, insert_actual_catalog, create_subscription, delete_subscription
 
 
 @pytest.fixture()
@@ -44,6 +44,9 @@ def event_loop():
     loop.close()
 
 
+
+
+
 @pytest.fixture()
 async def fixture_prefilled_subscription() -> SubscriptionBikeFamily:
     chat_id = 12345
@@ -52,4 +55,5 @@ async def fixture_prefilled_subscription() -> SubscriptionBikeFamily:
     subscription_item = await create_subscription(chat_id, bike_family)
     yield subscription_item
 
+    await delete_subscription(subscription_item.subscribe_id)
 

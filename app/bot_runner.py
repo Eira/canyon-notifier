@@ -23,6 +23,10 @@ def main() -> None:
         state=subscription_handlers.CreateSubscription.family_name,
     )
     router.register_message_handler(subscription_handlers.show_subscriptions, commands=['subscriptions_list'])
+    router.register_callback_query_handler(
+        subscription_handlers.delete_subscription,
+        lambda callback: callback.data and callback.data.startswith('delete_subscription:'),
+    )
     executor.start_polling(router, skip_updates=True)
 
 

@@ -13,6 +13,7 @@ ACTUAL_CATALOG_KEY = 'canyon-notifier:catalog'
 CATALOG_UPDATE_DATE_KEY = 'canyon-notifier:catalog:last_update_date'
 SUBSCRIPTION_ID_INCR_KEY = 'canyon-notifier:subscription:id_incr'
 SUBSCRIPTION_KEY = 'canyon-notifier:subscription:{0}'
+SUBSCRIPTION_BY_CHAT_KEY = 'canyon-notifier:chat:{0}:subscriptions'
 
 db_pool: aioredis.Redis = aioredis.from_url(
     app_settings.redis_dsn,
@@ -64,15 +65,14 @@ async def create_subscription(chat_id: int, bike_family: str) -> SubscriptionBik
     )
 
     await db_pool.hset(SUBSCRIPTION_KEY.format(subscription_item.subscribe_id), mapping=asdict(subscription_item))
-    await db_pool.sadd(f"chat_id_{chat_id}", subscription_item.subscribe_id)  # todo test
+    await db_pool.sadd(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscription_item.subscribe_id)
 
     return subscription_item
 
 
-async def subscriptions_from_db(chat_id: int) -> List[SubscriptionBikeFamily]:
+async def get_subscriptions(chat_id: int) -> List[SubscriptionBikeFamily]:
     """Get all users subscriptions from db. Return it like the list of subscriptions items."""
-    # todo test
-    subscribe_id_list = await db_pool.smembers(f"chat_id_{chat_id}")
+    subscribe_id_list = await db_pool.smembers(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id))
     subscriptions_list = []
 
     for subscribe_id in subscribe_id_list:
@@ -85,3 +85,14 @@ async def subscriptions_from_db(chat_id: int) -> List[SubscriptionBikeFamily]:
         subscriptions_list.append(bike_family_item)
 
     return subscriptions_list
+
+
+async def delete_subscription(subscribe_id: int) -> bool:
+    """Delete concrete subscriptions in database. Return amount of deleted subscriptions."""
+    key_name = SUBSCRIPTION_KEY.format(subscribe_id)
+    chat_id = await db_pool.hget(key_name, 'chat_id')
+
+    await db_pool.delete(key_name)
+    await db_pool.srem(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscribe_id)
+
+    return True

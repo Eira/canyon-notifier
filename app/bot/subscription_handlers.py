@@ -6,14 +6,13 @@ It contains functions for create the subscription for the concrete model of the 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+from app import storage
 from app.bike_model import SubscriptionBikeFamily
-from app.storage import create_subscription, subscriptions_from_db
 
 
 class CreateSubscription(StatesGroup):
-    """#TODO write what or is it."""
+    """Manage the state of creating subscription."""
 
     family_name = State()
 
@@ -40,7 +39,7 @@ async def cancel_subscription(message: types.Message, state: FSMContext) -> None
 
 async def process_subscription(message: types.Message, state: FSMContext) -> None:
     """Create the subscription."""
-    created_subscription: SubscriptionBikeFamily = await create_subscription(message.chat.id, message.text)
+    created_subscription: SubscriptionBikeFamily = await storage.create_subscription(message.chat.id, message.text)
 
     await state.finish()
     await message.reply(f'Got it! When "{created_subscription.bike_family}" will be available we will let you know!')
@@ -48,13 +47,31 @@ async def process_subscription(message: types.Message, state: FSMContext) -> Non
 
 async def show_subscriptions(message: types.Message) -> None:
     """Take all users subscription and show all subscriptions."""
-    # Todo вывереси список подписок (посмотреть на списке байков)
-    set_of_subscriptions = await subscriptions_from_db(message.chat.id)
+    list_of_subscriptions = await storage.get_subscriptions(message.chat.id)
 
-    btn_list_subscriptions: list = []
-    for subscription_item in set_of_subscriptions:
-        btn_list_subscriptions.append(InlineKeyboardButton(subscription_item, callback_data='button1'))
-    print(btn_list_subscriptions)
+    if list_of_subscriptions:
+        btn_list_subscriptions: list = []
 
-    inline_kb1 = InlineKeyboardMarkup().add(btn_list_subscriptions)
-    await message.answer("Press the button to delete subscription:", reply_markup=inline_kb1)
+        for subscription_item in list_of_subscriptions:
+            btn_list_subscriptions.append(
+                types.InlineKeyboardButton(
+                    text=subscription_item.bike_family,
+                    callback_data=f'delete_subscription:{subscription_item.subscribe_id}',
+                ),
+            )
+        inline_kb1 = types.InlineKeyboardMarkup().add(*btn_list_subscriptions)
+        await message.answer('Press the button to delete subscription:', reply_markup=inline_kb1)
+    else:
+        answer_test = '\n'.join((
+            'You do not have any subscriptions yet.',
+            '/subscribe - to make one.',
+        ))
+        await message.answer(answer_test)
+
+
+async def delete_subscription(callback_query: types.CallbackQuery) -> None:
+    """Delete selected subscription and show all the rest subscriptions."""
+    subscription_id = int(callback_query.data.split(':')[1])
+    await storage.delete_subscription(subscription_id)
+    await callback_query.answer('the subscription was deleted.')
+    await show_subscriptions(callback_query.message)
