@@ -62,9 +62,9 @@ async def test_start_subscription_smoke(mocker):
     assert mock.call_count == 1
 
 
-async def test_process_subscription_smoke(mocker):
+async def test_process_subscription_smoke(mocker, fixture_fresh_chat_id):
     message_mock = AsyncMock()
-    message_mock.chat.id = '123'
+    message_mock.chat.id = fixture_fresh_chat_id
     message_mock.text = 'Bike_test'
     state_mock = AsyncMock()
     mock_usage_counter = mocker.spy(storage, 'create_subscription')

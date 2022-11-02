@@ -92,7 +92,8 @@ async def delete_subscription(subscribe_id: int) -> bool:
     key_name = SUBSCRIPTION_KEY.format(subscribe_id)
     chat_id = await db_pool.hget(key_name, 'chat_id')
 
-    await db_pool.delete(key_name)
-    await db_pool.srem(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscribe_id)
+    if chat_id:
+        await db_pool.delete(key_name)
+        await db_pool.srem(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscribe_id)
 
     return True

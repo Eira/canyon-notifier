@@ -2,31 +2,29 @@ from app.bike_model import SubscriptionBikeFamily
 from app.storage import create_subscription, get_subscriptions, delete_subscription
 
 
-async def test_create_subscription_happy_path():
-    chat_id = '123'
+async def test_create_subscription_happy_path(fixture_fresh_chat_id):
     bike_family = 'NewBike'
 
-    res = await create_subscription(chat_id, bike_family)
+    res = await create_subscription(fixture_fresh_chat_id, bike_family)
 
-    res_get_subscription = await get_subscriptions(chat_id)
-    assert res.chat_id == chat_id
+    res_get_subscription = await get_subscriptions(fixture_fresh_chat_id)
+    assert res.chat_id == fixture_fresh_chat_id
     assert res.bike_family == bike_family
     assert res.subscribe_id > 0
-    assert res in res_get_subscription == [
+    assert res_get_subscription == [
         SubscriptionBikeFamily(
             subscribe_id=res.subscribe_id,
-            chat_id=chat_id,
+            chat_id=fixture_fresh_chat_id,
             bike_family=bike_family,
         )
     ]
 
 
-async def test_create_subscription_few_times():
-    chat_id = '123'
+async def test_create_subscription_few_times(fixture_fresh_chat_id):
     bike_family = 'NewBike'
 
-    res_1 = await create_subscription(chat_id, bike_family)
-    res_2 = await create_subscription(chat_id, bike_family)
+    res_1 = await create_subscription(fixture_fresh_chat_id, bike_family)
+    res_2 = await create_subscription(fixture_fresh_chat_id, bike_family)
 
     assert res_1.subscribe_id != res_2.subscribe_id
 
@@ -52,4 +50,7 @@ async def test_delete_subscription_happy_path(fixture_prefilled_subscription: Su
     assert subscriptions == []
 
 
+async def test_delete_subscription_invalid():
+    res = await delete_subscription(0)
 
+    assert res is True
