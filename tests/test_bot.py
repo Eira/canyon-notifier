@@ -1,8 +1,8 @@
 from unittest.mock import AsyncMock
 
-import app.storage
+from app import storage
 from app.bot.common_handlers import send_welcome, show_catalog
-from app.bot.subscription_handlers import start_subscription, process_subscription, cancel_subscription
+from app.bot.subscription_handlers import start_subscription, process_subscription, cancel_subscription, show_subscriptions, delete_subscription
 from app.bot_runner import main
 
 
@@ -62,12 +62,12 @@ async def test_start_subscription_smoke(mocker):
     assert mock.call_count == 1
 
 
-async def test_process_subscription_smoke(mocker):
+async def test_process_subscription_smoke(mocker, fixture_fresh_chat_id):
     message_mock = AsyncMock()
-    message_mock.chat.id = '123'
+    message_mock.chat.id = fixture_fresh_chat_id
     message_mock.text = 'Bike_test'
     state_mock = AsyncMock()
-    mock_usage_counter = mocker.spy(app.bot.subscription_handlers, 'create_subscription')
+    mock_usage_counter = mocker.spy(storage, 'create_subscription')
 
     expected_reply = f'Got it! When "{message_mock.text}" will be available we will let you know!'
 
@@ -86,3 +86,40 @@ async def test_cancel_subscription_smoke():
 
     message_mock.reply.assert_called_with('Cancelled.')
     assert state_mock.finish.call_count == 1
+
+
+async def test_show_subscriptions_happy_path(fixture_prefilled_subscription):
+    message_mock = AsyncMock()
+    message_mock.chat.id = fixture_prefilled_subscription.chat_id
+    expected_bike_family = fixture_prefilled_subscription.bike_family
+
+    await show_subscriptions(message=message_mock)
+
+    real_bike_family = message_mock.answer.await_args.kwargs['reply_markup'].inline_keyboard[0][0].text
+
+    assert message_mock.answer.call_count == 1
+    assert expected_bike_family == real_bike_family
+
+
+async def test_show_subscriptions_empty():
+    message_mock = AsyncMock()
+    message_mock.chat.id = 0
+    expected_answer = '\n'.join((
+        'You do not have any subscriptions yet.',
+        '/subscribe - to make one.',
+    ))
+
+    await show_subscriptions(message=message_mock)
+
+    message_mock.answer.assert_called_with(expected_answer)
+
+
+async def test_delete_subscription_happy_path(fixture_prefilled_subscription):
+    callback_query_mock = AsyncMock()
+    callback_query_mock.data = f'delete_subscription:{fixture_prefilled_subscription.subscribe_id}'
+
+    res = await delete_subscription(callback_query=callback_query_mock)
+    subscriptions_list = await storage.get_subscriptions(fixture_prefilled_subscription.chat_id)
+
+    assert res is None
+    assert subscriptions_list == []

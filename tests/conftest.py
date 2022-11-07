@@ -3,8 +3,8 @@ from typing import List
 
 import pytest
 
-from app.bike_model import Bike
-from app.storage import clear_catalog, insert_actual_catalog
+from app.bike_model import Bike, SubscriptionBikeFamily
+from app.storage import clear_catalog, insert_actual_catalog, create_subscription, delete_subscription, get_subscriptions
 
 
 @pytest.fixture()
@@ -42,3 +42,23 @@ def event_loop():
     loop = asyncio.get_event_loop()
     yield loop
     loop.close()
+
+
+@pytest.fixture()
+async def fixture_fresh_chat_id() -> int:
+    chat_id = 123
+
+    yield chat_id
+
+    subscription_list = await get_subscriptions(chat_id)
+    for subscription_item in subscription_list:
+        await delete_subscription(subscription_item.subscribe_id)
+
+
+@pytest.fixture()
+async def fixture_prefilled_subscription(fixture_fresh_chat_id) -> SubscriptionBikeFamily:
+    bike_family = 'test_bike_family'
+
+    subscription_item = await create_subscription(fixture_fresh_chat_id, bike_family)
+    yield subscription_item
+
