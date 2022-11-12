@@ -71,6 +71,7 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
 
 async def _update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
     """Clear the old catalog in database and insert actual. Return amount of deleted and added items."""
+
     items_deleted: int = await storage.clear_catalog()
     items_added: int = await storage.insert_actual_catalog(actual_catalog)
 
@@ -82,17 +83,29 @@ def _get_canyon_catalog() -> List[Bike]:
     return _parse_canyon_catalog(html_tree)
 
 
+def _get_new_available_bikes(old_catalog: List[Bike], actual_catalog: List[Bike]) -> List[Bike]:
+    """Compare old list of available bikes with new one. Return list of bikes, that wasn't available before."""
+    old_catalog_id = {bike.id for bike in old_catalog}
+
+    return [
+        new_bike
+        for new_bike in actual_catalog
+        if new_bike.id not in old_catalog_id
+    ]
+
+
 async def main(throttling_time: float, amount_of_iterations: int) -> int:
     """
     Do the main runner of our worker.
 
     Keep catalog of available bikes uptodate.
+    # todo дописать
     Return amount of iterations.
     """
     cnt = 0
     while cnt < amount_of_iterations or not amount_of_iterations:
         if cnt:
-            time.sleep(throttling_time)
+            await asyncio.sleep(throttling_time)
 
         logging.info(f'Current iteration is {cnt}')
         cnt += 1
@@ -104,6 +117,11 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
         if not actual_catalog:
             logging.warning('empty catalog found!')
             continue
+
+        available_bikes_list = _get_new_available_bikes(
+            await storage.get_catalog(),
+            actual_catalog,
+        )
 
         items_deleted, items_added = await _update_catalog(actual_catalog)
         logging.info(f'{items_deleted} old bikes was deleted. {items_added} new bikes was added.')

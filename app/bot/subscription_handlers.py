@@ -75,3 +75,5 @@ async def delete_subscription(callback_query: types.CallbackQuery) -> None:
     await storage.delete_subscription(subscription_id)
     await callback_query.answer('the subscription was deleted.')
     await show_subscriptions(callback_query.message)
+
+

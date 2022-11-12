@@ -55,5 +55,7 @@ poetry run mypy app/
 python -m app.bot_runner
 ```
 
-
-
+### Local run Subscription notifier
+```
+python -m app.subscription_notifier
+```
