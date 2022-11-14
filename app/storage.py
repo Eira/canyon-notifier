@@ -42,7 +42,7 @@ async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
     return await db_pool.scard(ACTUAL_CATALOG_KEY)
 
 
-#async def insert_new_
+# async def insert_new_
 
 
 async def get_catalog() -> List[Bike]:

@@ -71,7 +71,6 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
 
 async def _update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
     """Clear the old catalog in database and insert actual. Return amount of deleted and added items."""
-
     items_deleted: int = await storage.clear_catalog()
     items_added: int = await storage.insert_actual_catalog(actual_catalog)
 

@@ -30,3 +30,11 @@ class SubscriptionBikeFamily:
     subscribe_id: int
     chat_id: int
     bike_family: str
+
+
+@dataclass
+class Match:
+    """Result of matching subscriptions and new available bikes. Sum of SubscriptionBikeFamily and Bike dataclasses."""
+
+    bike: Bike
+    subscription: SubscriptionBikeFamily
