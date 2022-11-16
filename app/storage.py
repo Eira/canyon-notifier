@@ -1,7 +1,7 @@
 """Methods for access the database."""
 import datetime
 from dataclasses import asdict
-from typing import List
+from typing import List, Optional
 
 import aioredis
 
@@ -12,7 +12,8 @@ BIKE_KEY = 'canyon-notifier:bike:{0}'
 ACTUAL_CATALOG_KEY = 'canyon-notifier:catalog'
 CATALOG_UPDATE_DATE_KEY = 'canyon-notifier:catalog:last_update_date'
 SUBSCRIPTION_ID_INCR_KEY = 'canyon-notifier:subscription:id_incr'
-SUBSCRIPTION_KEY = 'canyon-notifier:subscription:{0}'
+SUBSCRIPTIONS_KEY = 'canyon-notifier:subscriptions'
+SUBSCRIPTION_BY_ID_KEY = 'canyon-notifier:subscription:{0}'
 SUBSCRIPTION_BY_CHAT_KEY = 'canyon-notifier:chat:{0}:subscriptions'
 
 db_pool: aioredis.Redis = aioredis.from_url(
@@ -59,6 +60,14 @@ async def get_catalog() -> List[Bike]:
     return sorted(output, key=lambda bike: bike.id)
 
 
+async def get_available_bike_list() -> List[Bike]:
+    """Get bikes, now available in the store, from database. Return list of it."""
+
+    output: List[Bike] = []
+
+    return output
+
+
 async def create_subscription(chat_id: int, bike_family: str) -> SubscriptionBikeFamily:
     """Get data from user in bot. Return the object of subscription."""
     subscription_item = SubscriptionBikeFamily(
@@ -67,19 +76,26 @@ async def create_subscription(chat_id: int, bike_family: str) -> SubscriptionBik
         bike_family=bike_family,
     )
 
-    await db_pool.hset(SUBSCRIPTION_KEY.format(subscription_item.subscribe_id), mapping=asdict(subscription_item))
+    await db_pool.hset(SUBSCRIPTION_BY_ID_KEY.format(subscription_item.subscribe_id), mapping=asdict(subscription_item))
     await db_pool.sadd(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscription_item.subscribe_id)
+    await db_pool.sadd(SUBSCRIPTIONS_KEY, subscription_item.subscribe_id)
 
     return subscription_item
 
 
-async def get_subscriptions(chat_id: int) -> List[SubscriptionBikeFamily]:
-    """Get all users subscriptions from db. Return it like the list of subscriptions items."""
-    subscribe_id_list = await db_pool.smembers(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id))
+async def get_subscriptions(chat_id: Optional[int] = None) -> List[SubscriptionBikeFamily]:
+    """Get all subscriptions or only one user subscriptions from db. Return it like the list of subscriptions items."""
+    # todo test на все подписки
+    if chat_id is None:
+        db_key = SUBSCRIPTIONS_KEY
+    else:
+        db_key = SUBSCRIPTION_BY_CHAT_KEY.format(chat_id)
+
+    subscribe_id_list = await db_pool.smembers(db_key)
     subscriptions_list = []
 
     for subscribe_id in subscribe_id_list:
-        subscription = await db_pool.hgetall(SUBSCRIPTION_KEY.format(subscribe_id))
+        subscription = await db_pool.hgetall(SUBSCRIPTION_BY_ID_KEY.format(subscribe_id))
         bike_family_item = SubscriptionBikeFamily(
             subscribe_id=int(subscription['subscribe_id']),
             chat_id=int(subscription['chat_id']),
@@ -92,11 +108,12 @@ async def get_subscriptions(chat_id: int) -> List[SubscriptionBikeFamily]:
 
 async def delete_subscription(subscribe_id: int) -> bool:
     """Delete concrete subscriptions in database. Return amount of deleted subscriptions."""
-    key_name = SUBSCRIPTION_KEY.format(subscribe_id)
+    key_name = SUBSCRIPTION_BY_ID_KEY.format(subscribe_id)
     chat_id = await db_pool.hget(key_name, 'chat_id')
 
     if chat_id:
         await db_pool.delete(key_name)
         await db_pool.srem(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscribe_id)
+        await db_pool.srem(SUBSCRIPTION_BY_CHAT_KEY, subscribe_id)
 
     return True

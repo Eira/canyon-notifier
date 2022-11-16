@@ -1,5 +1,5 @@
 from app.bike_model import Bike, SubscriptionBikeFamily, Match
-from app.subscription_notifier import send_subscription_message, get_notification_bikes
+from app.subscription_notifier import send_subscription_message, get_notification_bikes, main
 
 
 def test_get_notification_bikes_happy_path():
@@ -104,3 +104,9 @@ async def test_send_subscription_message_smoke():
     res = await send_subscription_message(subscription_to_send)
 
     assert res is True
+
+
+def test_main_smoke():
+    res = main()
+
+    assert True

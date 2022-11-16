@@ -12,6 +12,7 @@ from aiogram import Bot
 
 from app.bike_model import Bike, Match, SubscriptionBikeFamily
 from app.settings import app_settings
+from app.storage import get_subscriptions
 
 bot = Bot(token=app_settings.bot_token)
 
@@ -30,7 +31,7 @@ def get_notification_bikes(
             bike_title = bike.title.lower()
 
             if subscriptions_search_phrase in bike_title:
-                list_of_matches.append(Match(bike, subscription))  # todo ask корректна ли такая запись?
+                list_of_matches.append(Match(bike, subscription))
 
     return list_of_matches
 
@@ -64,12 +65,16 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
         if cnt:
             await asyncio.sleep(throttling_time)
 
+        subscription_list = await get_subscriptions()
+        available_bike_list = []
+
+        list_of_matches = get_notification_bikes(subscription_list, available_bike_list)
+        if list_of_matches: #доступны новые велики из подписок в каталоге
+            for match in list_of_matches:
+                await send_subscription_message(match)
+
         logging.info(f'Current iteration is {cnt}')
         cnt += 1
-
-#       get_notification_bikes()
-#        if  #доступны новые велики из подписок в каталоге
-#            send_subscription_message()
 
     return cnt
 
