@@ -10,9 +10,9 @@ from typing import List
 
 from aiogram import Bot
 
+from app import storage
 from app.bike_model import Bike, Match, SubscriptionBikeFamily
 from app.settings import app_settings
-from app.storage import get_subscriptions
 
 bot = Bot(token=app_settings.bot_token)
 
@@ -57,7 +57,6 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
     Send messages about it.
     Return amount of iterations.
     """
-    # todo impl
     # todo test
 
     cnt = 0
@@ -65,13 +64,17 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
         if cnt:
             await asyncio.sleep(throttling_time)
 
-        subscription_list = await get_subscriptions()
-        available_bike_list = []
+        subscription_list = await storage.get_subscriptions()
+        available_bike_list = await storage.get_available_bike_list()
 
         list_of_matches = get_notification_bikes(subscription_list, available_bike_list)
         if list_of_matches: #доступны новые велики из подписок в каталоге
             for match in list_of_matches:
                 await send_subscription_message(match)
+
+        await storage.delete_available_bike_list([
+            bike.id for bike in available_bike_list
+        ])
 
         logging.info(f'Current iteration is {cnt}')
         cnt += 1

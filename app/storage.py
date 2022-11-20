@@ -15,6 +15,7 @@ SUBSCRIPTION_ID_INCR_KEY = 'canyon-notifier:subscription:id_incr'
 SUBSCRIPTIONS_KEY = 'canyon-notifier:subscriptions'
 SUBSCRIPTION_BY_ID_KEY = 'canyon-notifier:subscription:{0}'
 SUBSCRIPTION_BY_CHAT_KEY = 'canyon-notifier:chat:{0}:subscriptions'
+SUBSCRIPTION_AVAILABLE_KEY = 'canyon-notifier:subscription:available'
 
 db_pool: aioredis.Redis = aioredis.from_url(
     app_settings.redis_dsn,
@@ -43,9 +44,6 @@ async def insert_actual_catalog(actual_catalog: List[Bike]) -> int:
     return await db_pool.scard(ACTUAL_CATALOG_KEY)
 
 
-# async def insert_new_
-
-
 async def get_catalog() -> List[Bike]:
     """Get actual catalog from the database. Return list of bikes in elements."""
     list_bike_id = await db_pool.smembers(ACTUAL_CATALOG_KEY)
@@ -58,14 +56,6 @@ async def get_catalog() -> List[Bike]:
         output.append(bike_item)
 
     return sorted(output, key=lambda bike: bike.id)
-
-
-async def get_available_bike_list() -> List[Bike]:
-    """Get bikes, now available in the store, from database. Return list of it."""
-
-    output: List[Bike] = []
-
-    return output
 
 
 async def create_subscription(chat_id: int, bike_family: str) -> SubscriptionBikeFamily:
@@ -117,3 +107,38 @@ async def delete_subscription(subscribe_id: int) -> bool:
         await db_pool.srem(SUBSCRIPTION_BY_CHAT_KEY, subscribe_id)
 
     return True
+
+
+async def save_new_available_bikes(available_bikes_list: List[Bike]):
+    """ Save list available bikes, mentioned in subscriptions, to the database."""
+    # todo test
+    if not available_bikes_list:
+        return
+
+    await db_pool.sadd(
+        SUBSCRIPTION_AVAILABLE_KEY,
+        *[bike.id for bike in available_bikes_list],
+    )
+
+
+async def get_available_bike_list() -> List[Bike]:
+    """Get bikes, now available in the store, from database. Return list of it."""
+    # todo test
+    output: List[Bike] = []
+    bike_id_list = await db_pool.smembers(SUBSCRIPTION_AVAILABLE_KEY)
+
+    for bike_id in bike_id_list:
+        bike_item: Bike = Bike(
+            **await db_pool.hgetall(BIKE_KEY.format(bike_id)),
+        )
+
+        output.append(bike_item)
+
+    return output
+
+
+async def delete_available_bike_list(bike_id_list: List[str]) -> None:
+    """Delete items from the list of available bikes."""
+    # todo test
+    for bike_id in bike_id_list:
+        await db_pool.srem(SUBSCRIPTION_AVAILABLE_KEY, bike_id)

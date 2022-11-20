@@ -1,5 +1,6 @@
-from app.bike_model import SubscriptionBikeFamily
-from app.storage import create_subscription, get_subscriptions, delete_subscription
+from app.bike_model import SubscriptionBikeFamily, Bike
+from app.storage import create_subscription, get_subscriptions, delete_subscription, get_available_bike_list, save_new_available_bikes, delete_available_bike_list
+from app.subscription_notifier import main
 
 
 async def test_create_subscription_happy_path(fixture_fresh_chat_id):
@@ -54,3 +55,69 @@ async def test_delete_subscription_invalid():
     res = await delete_subscription(0)
 
     assert res is True
+
+
+async def test_save_new_available_bikes():
+    available_bikes_list = [
+        Bike(
+            id='spectral_125_cf_9',
+            title='Spectral 125 CF 9',
+            link='https://www.canyon.com/en-cz/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR',
+            family='Spectral',
+            model='125 CF 9',
+        ),
+        Bike(
+            id='exceed_cf_7',
+            title='Exceed CF 7',
+            link='https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
+            family='Exceed',
+            model='CF 7',
+        )
+    ]
+
+    res = await save_new_available_bikes(available_bikes_list)
+
+    assert res is None
+
+
+async def test_get_available_bike_list_happy_path():
+    # todo вероятно надо чистить базу
+    res = await get_available_bike_list()
+
+    assert res == [
+        Bike(
+            id='spectral_125_cf_9',
+            title='Spectral 125 CF 9',
+            link='https://www.canyon.com/en-cz/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR',
+            family='Spectral',
+            model='125 CF 9',
+        ),
+        Bike(
+            id='exceed_cf_7',
+            title='Exceed CF 7',
+            link='https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
+            family='Exceed',
+            model='CF 7',
+        )
+    ]
+
+
+async def test_delete_available_bike_list_happy_path():
+    # todo тут явно нужна фикстура
+    bike_id_set = {'spectral_125_cf_9', 'exceed_cf_7'}
+
+    await delete_available_bike_list(bike_id_set)
+
+    rest_bike_id_list = {
+        bike.id
+        for bike in await get_available_bike_list()
+    }
+
+    assert bike_id_set not in rest_bike_id_list
+
+
+async def test_main_smoke():
+    res = await main(throttling_time=5.0, amount_of_iterations=2)
+
+    assert True
+    assert res == 2
