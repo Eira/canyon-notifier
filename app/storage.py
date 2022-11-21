@@ -86,12 +86,13 @@ async def get_subscriptions(chat_id: Optional[int] = None) -> List[SubscriptionB
 
     for subscribe_id in subscribe_id_list:
         subscription = await db_pool.hgetall(SUBSCRIPTION_BY_ID_KEY.format(subscribe_id))
-        bike_family_item = SubscriptionBikeFamily(
-            subscribe_id=int(subscription['subscribe_id']),
-            chat_id=int(subscription['chat_id']),
-            bike_family=subscription['bike_family'],
+        subscriptions_list.append(
+            SubscriptionBikeFamily(
+                subscribe_id=int(subscription['subscribe_id']),
+                chat_id=int(subscription['chat_id']),
+                bike_family=subscription['bike_family'],
+            ),
         )
-        subscriptions_list.append(bike_family_item)
 
     return subscriptions_list
 
@@ -104,14 +105,13 @@ async def delete_subscription(subscribe_id: int) -> bool:
     if chat_id:
         await db_pool.delete(key_name)
         await db_pool.srem(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscribe_id)
-        await db_pool.srem(SUBSCRIPTION_BY_CHAT_KEY, subscribe_id)
+        await db_pool.srem(SUBSCRIPTIONS_KEY, subscribe_id)
 
     return True
 
 
-async def save_new_available_bikes(available_bikes_list: List[Bike]):
-    """ Save list available bikes, mentioned in subscriptions, to the database."""
-    # todo test
+async def save_new_available_bikes(available_bikes_list: List[Bike]) -> None:
+    """Save list available bikes, mentioned in subscriptions, to the database."""
     if not available_bikes_list:
         return
 
@@ -137,8 +137,11 @@ async def get_available_bike_list() -> List[Bike]:
     return output
 
 
-async def delete_available_bike_list(bike_id_list: List[str]) -> None:
+async def delete_available_bike_list(bike_id_list: Optional[List[str]] = None) -> None:
     """Delete items from the list of available bikes."""
     # todo test
-    for bike_id in bike_id_list:
-        await db_pool.srem(SUBSCRIPTION_AVAILABLE_KEY, bike_id)
+    if bike_id_list is None:
+        await db_pool.delete(SUBSCRIPTION_AVAILABLE_KEY)
+    else:
+        for bike_id in bike_id_list:
+            await db_pool.srem(SUBSCRIPTION_AVAILABLE_KEY, bike_id)

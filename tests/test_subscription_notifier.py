@@ -106,7 +106,8 @@ async def test_send_subscription_message_smoke():
     assert res is True
 
 
-def test_main_smoke():
-    res = main()
+async def test_main_smoke():
+    res = await main(throttling_time=5.0, amount_of_iterations=2)
 
     assert True
+    assert res == 2

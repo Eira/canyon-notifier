@@ -57,7 +57,7 @@ async def test_delete_subscription_invalid():
     assert res is True
 
 
-async def test_save_new_available_bikes():
+async def test_save_new_available_bikes_happy_path(fixture_empty_available_bike_list):
     available_bikes_list = [
         Bike(
             id='spectral_125_cf_9',
@@ -78,32 +78,16 @@ async def test_save_new_available_bikes():
     res = await save_new_available_bikes(available_bikes_list)
 
     assert res is None
+    assert await get_available_bike_list() == available_bikes_list
 
 
-async def test_get_available_bike_list_happy_path():
-    # todo вероятно надо чистить базу
+async def test_get_available_bike_list_happy_path(fixture_prefilled_available_bike_list):
     res = await get_available_bike_list()
 
-    assert res == [
-        Bike(
-            id='spectral_125_cf_9',
-            title='Spectral 125 CF 9',
-            link='https://www.canyon.com/en-cz/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR',
-            family='Spectral',
-            model='125 CF 9',
-        ),
-        Bike(
-            id='exceed_cf_7',
-            title='Exceed CF 7',
-            link='https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
-            family='Exceed',
-            model='CF 7',
-        )
-    ]
+    assert res == fixture_prefilled_available_bike_list
 
 
-async def test_delete_available_bike_list_happy_path():
-    # todo тут явно нужна фикстура
+async def test_delete_available_bike_list_happy_path(fixture_empty_available_bike_list):
     bike_id_set = {'spectral_125_cf_9', 'exceed_cf_7'}
 
     await delete_available_bike_list(bike_id_set)
@@ -114,10 +98,3 @@ async def test_delete_available_bike_list_happy_path():
     }
 
     assert bike_id_set not in rest_bike_id_list
-
-
-async def test_main_smoke():
-    res = await main(throttling_time=5.0, amount_of_iterations=2)
-
-    assert True
-    assert res == 2

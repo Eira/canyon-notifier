@@ -1,7 +1,6 @@
 """This module is parsing canyon catalog page to the database, and updating that catalog at given time intervals."""
 import asyncio
 import logging
-import time
 from typing import List, Tuple
 
 import httpx

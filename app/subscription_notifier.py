@@ -68,7 +68,7 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
         available_bike_list = await storage.get_available_bike_list()
 
         list_of_matches = get_notification_bikes(subscription_list, available_bike_list)
-        if list_of_matches: #доступны новые велики из подписок в каталоге
+        if list_of_matches:
             for match in list_of_matches:
                 await send_subscription_message(match)
 
