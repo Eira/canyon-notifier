@@ -97,7 +97,7 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
     Do the main runner of catalog updater worker.
 
     Keep catalog of available bikes uptodate.
-    Make also a list of bikes that wasn't available before (needed for subscriptions).
+    Create also a list of bikes that wasn't available before (needed for subscriptions).
     Return amount of iterations.
     """
     cnt = 0
@@ -116,13 +116,16 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
             logging.warning('empty catalog found!')
             continue
 
-        available_bikes_list = _get_new_available_bikes(
-            await storage.get_catalog(),
-            actual_catalog,
-        )
+        old_catalog = await storage.get_catalog()
+        available_bikes_list = []
+        if old_catalog:
+            available_bikes_list = _get_new_available_bikes(
+                old_catalog,
+                actual_catalog,
+            )
 
-        await storage.save_new_available_bikes(available_bikes_list)
         items_deleted, items_added = await _update_catalog(actual_catalog)
+        await storage.save_new_available_bikes(available_bikes_list)
         logging.info(f'{items_deleted} old bikes was deleted. {items_added} new bikes was added.')
 
     return cnt
