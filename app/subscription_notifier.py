@@ -11,7 +11,7 @@ from typing import List
 from aiogram import Bot
 
 from app import storage
-from app.bike_model import Bike, Match, SubscriptionBikeFamily
+from app.models import Bike, Match, SubscriptionBikeFamily
 from app.settings import app_settings
 
 bot = Bot(token=app_settings.bot_token)

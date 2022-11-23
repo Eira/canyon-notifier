@@ -1,4 +1,4 @@
-from app.bike_model import Bike
+from app.models import Bike
 from app.storage import get_catalog
 
 

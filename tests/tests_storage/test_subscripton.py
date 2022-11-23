@@ -1,4 +1,4 @@
-from app.bike_model import SubscriptionBikeFamily, Bike
+from app.models import SubscriptionBikeFamily, Bike
 from app.storage import create_subscription, get_subscriptions, delete_subscription, get_available_bike_list, save_new_available_bikes, delete_available_bike_list
 from app.subscription_notifier import main
 
@@ -86,6 +86,8 @@ async def test_get_available_bike_list_happy_path(fixture_prefilled_available_bi
 
     assert res == fixture_prefilled_available_bike_list
 
+# todo test на пустой каталог
+
 
 async def test_delete_available_bike_list_happy_path(fixture_empty_available_bike_list):
     bike_id_set = {'spectral_125_cf_9', 'exceed_cf_7'}
@@ -98,3 +100,5 @@ async def test_delete_available_bike_list_happy_path(fixture_empty_available_bik
     }
 
     assert bike_id_set not in rest_bike_id_list
+
+# todo test на пустой каталог

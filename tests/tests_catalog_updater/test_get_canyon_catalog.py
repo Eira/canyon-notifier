@@ -1,5 +1,5 @@
 from app.catalog_updater import _get_canyon_catalog
-from app.bike_model import Bike
+from app.models import Bike
 
 
 def test_get_canyon_catalog():

@@ -6,7 +6,7 @@ from typing import Generator, List
 from aiogram import types
 from aiogram.utils.markdown import hlink
 
-from app.bike_model import Bike, CatalogFamily
+from app.models import Bike, CatalogFamily
 from app.storage import get_catalog
 
 

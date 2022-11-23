@@ -8,7 +8,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from app import storage
-from app.bike_model import SubscriptionBikeFamily
+from app.models import SubscriptionBikeFamily
 
 
 class CreateSubscription(StatesGroup):

@@ -7,7 +7,7 @@ import httpx
 from lxml import etree
 
 from app import storage
-from app.bike_model import Bike
+from app.models import Bike
 from app.settings import app_settings
 
 
@@ -94,10 +94,10 @@ def _get_new_available_bikes(old_catalog: List[Bike], actual_catalog: List[Bike]
 
 async def main(throttling_time: float, amount_of_iterations: int) -> int:
     """
-    Do the main runner of our worker.
+    Do the main runner of catalog updater worker.
 
     Keep catalog of available bikes uptodate.
-    # todo дописать
+    Make also a list of bikes that wasn't available before (needed for subscriptions).
     Return amount of iterations.
     """
     cnt = 0

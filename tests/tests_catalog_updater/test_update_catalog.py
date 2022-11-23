@@ -1,6 +1,6 @@
 from typing import List
 
-from app.bike_model import Bike
+from app.models import Bike
 from app.catalog_updater import _update_catalog, _get_new_available_bikes
 
 
@@ -10,7 +10,7 @@ async def test_update_catalog_happy_path(fixture_prefilled_catalog: List[Bike]):
     assert res == (2, 2)
 
 
-def test__get_new_available_bikes_happy_path():
+def test_get_new_available_bikes_happy_path():
     old_bikes_list = [
         Bike(
             id='spectral_125_cf_9',
