@@ -8,13 +8,10 @@ import asyncio
 import logging
 from typing import List
 
-from aiogram import Bot
-
 from app import storage
+from app.bot_runner import bot
 from app.models import Bike, Match, SubscriptionBikeFamily
 from app.settings import app_settings
-
-bot = Bot(token=app_settings.bot_token)
 
 
 def get_notification_bikes(
@@ -69,8 +66,12 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
 
         list_of_matches = get_notification_bikes(subscription_list, available_bike_list)
         if list_of_matches:
+            cnt_messages = 0
             for match in list_of_matches:
                 await send_subscription_message(match)
+                cnt_messages += 1
+            logging.info(f'{len(list_of_matches)} matches was found.')
+            logging.info(f'{cnt_messages} messages was sent.')
 
         await storage.delete_available_bike_list([
             bike.id for bike in available_bike_list

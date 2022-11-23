@@ -75,7 +75,6 @@ async def create_subscription(chat_id: int, bike_family: str) -> SubscriptionBik
 
 async def get_subscriptions(chat_id: Optional[int] = None) -> List[SubscriptionBikeFamily]:
     """Get all subscriptions or only one user subscriptions from db. Return it like the list of subscriptions items."""
-    # todo test на все подписки
     if chat_id is None:
         db_key = SUBSCRIPTIONS_KEY
     else:
@@ -141,5 +140,4 @@ async def delete_available_bike_list(bike_id_list: Optional[List[str]] = None) -
     if bike_id_list is None:
         await db_pool.delete(SUBSCRIPTION_AVAILABLE_KEY)
     else:
-        for bike_id in bike_id_list:
-            await db_pool.srem(SUBSCRIPTION_AVAILABLE_KEY, bike_id)
+        await db_pool.srem(SUBSCRIPTION_AVAILABLE_KEY, *[bike_id for bike_id in bike_id_list])

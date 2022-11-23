@@ -7,10 +7,11 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from app.bot import common_handlers, subscription_handlers
 from app.settings import app_settings
 
+bot = Bot(token=app_settings.bot_token)
+
 
 def main() -> None:
     """Telegram bot app runner."""
-    bot = Bot(token=app_settings.bot_token)
     storage = MemoryStorage()
 
     router = Dispatcher(bot, storage=storage)
