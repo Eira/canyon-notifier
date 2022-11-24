@@ -35,7 +35,6 @@ def get_notification_bikes(
 
 async def send_subscription_message(subscription_to_send: Match) -> bool:
     """Get data about the available bike which user subscribed at and notify user about it."""
-    # todo test на невалидные данные (невалидный пользователь)
     message = '\n'.join((
         f'{subscription_to_send.bike.title} is available in the stock!',
         f'{subscription_to_send.bike.link}',
@@ -54,8 +53,6 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
     Send messages about it.
     Return amount of iterations.
     """
-    # todo test
-
     cnt = 0
     while cnt < amount_of_iterations or not amount_of_iterations:
         if cnt:
@@ -73,9 +70,9 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
             logging.info(f'{len(list_of_matches)} matches was found.')
             logging.info(f'{cnt_messages} messages was sent.')
 
-        await storage.delete_available_bike_list([
-            bike.id for bike in available_bike_list
-        ])
+            await storage.delete_available_bike_list([
+                bike.id for bike in available_bike_list
+            ])
 
         logging.info(f'Current iteration is {cnt}')
         cnt += 1

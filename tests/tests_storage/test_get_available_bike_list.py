@@ -10,4 +10,8 @@ async def test_get_available_bike_list_happy_path(fixture_prefilled_available_bi
         assert isinstance(item, Bike)
     assert set([bike.id for bike in res]) == set([bike.id for bike in fixture_prefilled_available_bike_list])
 
-# todo test на пустой каталог
+
+async def test_get_available_bike_list_empty_catalog(fixture_empty_available_bike_list):
+    res = await get_available_bike_list()
+
+    assert set([bike.id for bike in res]) == set()

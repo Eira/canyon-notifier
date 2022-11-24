@@ -125,7 +125,8 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
             )
 
         items_deleted, items_added = await _update_catalog(actual_catalog)
-        await storage.save_new_available_bikes(available_bikes_list)
+        if available_bikes_list:
+            await storage.save_new_available_bikes(available_bikes_list)
         logging.info(f'{items_deleted} old bikes was deleted. {items_added} new bikes was added.')
 
     return cnt

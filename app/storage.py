@@ -111,9 +111,6 @@ async def delete_subscription(subscribe_id: int) -> bool:
 
 async def save_new_available_bikes(available_bikes_list: List[Bike]) -> None:
     """Save list available bikes, mentioned in subscriptions, to the database."""
-    if not available_bikes_list:
-        return
-
     await db_pool.sadd(
         SUBSCRIPTION_AVAILABLE_KEY,
         *[bike.id for bike in available_bikes_list],
@@ -140,4 +137,4 @@ async def delete_available_bike_list(bike_id_list: Optional[List[str]] = None) -
     if bike_id_list is None:
         await db_pool.delete(SUBSCRIPTION_AVAILABLE_KEY)
     else:
-        await db_pool.srem(SUBSCRIPTION_AVAILABLE_KEY, *[bike_id for bike_id in bike_id_list])
+        await db_pool.srem(SUBSCRIPTION_AVAILABLE_KEY, *bike_id_list)

@@ -1,3 +1,6 @@
+import pytest
+from aioredis import ResponseError
+
 from app.storage import get_available_bike_list, delete_available_bike_list
 
 
@@ -13,5 +16,29 @@ async def test_delete_available_bike_list_happy_path(fixture_empty_available_bik
 
     assert bike_id_set not in rest_bike_id_list
 
-# todo test на пустой каталог
-# todo test на уже удаленный байк из списка доступных
+
+async def test_delete_available_bike_list_delete_all(fixture_empty_available_bike_list):
+    await delete_available_bike_list()
+
+    assert await get_available_bike_list() == []
+
+
+async def test_delete_available_bike_list_empty_catalog(fixture_empty_available_bike_list):
+    bike_id_set = set()
+
+    with pytest.raises(ResponseError, match='wrong number of arguments*'):
+        await delete_available_bike_list(bike_id_set)
+
+
+async def test_delete_available_bike_list_wrong_id(fixture_empty_available_bike_list):
+    bike_id_set = {'test123', 'test2123'}
+
+    res = await delete_available_bike_list(bike_id_set)
+
+    rest_bike_id_list = {
+            bike.id
+            for bike in await get_available_bike_list()
+        }
+
+    assert res is None
+    assert bike_id_set not in rest_bike_id_list

@@ -20,7 +20,6 @@ async def test_create_subscription_happy_path(fixture_fresh_chat_id):
     ]
 
 
-# todo test на все подписки ? что это
 async def test_create_subscription_few_times(fixture_fresh_chat_id):
     bike_family = 'NewBike'
 

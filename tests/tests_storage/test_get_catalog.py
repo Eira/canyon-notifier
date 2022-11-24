@@ -21,3 +21,9 @@ async def test_get_catalog_happy_path(fixture_prefilled_catalog):
             model='125 CF 9',
         ),
     ]
+
+
+async def test_get_catalog_happy_path(fixture_empty_catalog):
+    res = await get_catalog()
+
+    assert res == []
