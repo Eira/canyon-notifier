@@ -92,6 +92,21 @@ def _get_new_available_bikes(old_catalog: List[Bike], actual_catalog: List[Bike]
     ]
 
 
+async def _update_available_bikes_list(old_catalog: List[Bike], actual_catalog: List[Bike]) -> List[Bike]:
+    """Create a list of bikes that wasn't available before."""
+    available_bikes_list = []
+
+    if old_catalog:
+        available_bikes_list = _get_new_available_bikes(
+            old_catalog,
+            actual_catalog,
+        )
+    if available_bikes_list:
+        await storage.save_new_available_bikes(available_bikes_list)
+
+    return available_bikes_list
+
+
 async def main(throttling_time: float, amount_of_iterations: int) -> int:
     """
     Do the main runner of catalog updater worker.
@@ -117,16 +132,9 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
             continue
 
         old_catalog = await storage.get_catalog()
-        available_bikes_list = []
-        if old_catalog:
-            available_bikes_list = _get_new_available_bikes(
-                old_catalog,
-                actual_catalog,
-            )
 
         items_deleted, items_added = await _update_catalog(actual_catalog)
-        if available_bikes_list:
-            await storage.save_new_available_bikes(available_bikes_list)
+        await _update_available_bikes_list(old_catalog, actual_catalog)
         logging.info(f'{items_deleted} old bikes was deleted. {items_added} new bikes was added.')
 
     return cnt
