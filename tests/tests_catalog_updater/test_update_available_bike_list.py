@@ -1,4 +1,4 @@
-from app.catalog_updater import _update_available_bikes_list
+from app.catalog.available_bike_list_operations import update_available_bikes_list
 from app.models import Bike
 
 
@@ -37,7 +37,7 @@ async def test_update_available_bike_list_happy_path(mocker):
         ),
     ]
 
-    res = await _update_available_bikes_list(old_bikes_list, new_bikes_list)
+    res = await update_available_bikes_list(old_bikes_list, new_bikes_list)
 
     assert res == [
         Bike(
@@ -70,7 +70,7 @@ async def test_update_available_bike_list_empty_old_list():
         ),
     ]
 
-    res = await _update_available_bikes_list(old_bikes_list, new_bikes_list)
+    res = await update_available_bikes_list(old_bikes_list, new_bikes_list)
 
     assert res == []
 
@@ -95,7 +95,7 @@ async def test_update_available_bike_list__empty_new_list(mocker):
     ]
     new_bikes_list = []
 
-    res = await _update_available_bikes_list(old_bikes_list, new_bikes_list)
+    res = await update_available_bikes_list(old_bikes_list, new_bikes_list)
 
     assert res == []
     assert mock.call_count == 0

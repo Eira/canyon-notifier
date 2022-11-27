@@ -1,6 +1,6 @@
 from lxml import etree
 
-from app.catalog_updater import _parse_canyon_catalog
+from app.catalog.catalog_operations import parse_canyon_catalog
 from app.models import Bike
 
 
@@ -250,7 +250,7 @@ or from 19.383,17 CZK/Mo.
         '''
     )
 
-    res = _parse_canyon_catalog(one_bike_tree)
+    res = parse_canyon_catalog(one_bike_tree)
 
     assert isinstance(res, list)
     assert len(res) == 1
@@ -988,7 +988,7 @@ or from 25.566,50 CZK/Mo.
         '''
     )
 
-    res = _parse_canyon_catalog(few_bike_tree)
+    res = parse_canyon_catalog(few_bike_tree)
 
     assert len(res) == 3
     assert res[0].id == 'speedmax_cf_8_disc'
@@ -1011,7 +1011,7 @@ or from 25.566,50 CZK/Mo.
 def test_parse_canyon_catalog_not_found():
     no_bike_tree = etree.HTML('<ul></ul>')
 
-    res = _parse_canyon_catalog(no_bike_tree)
+    res = parse_canyon_catalog(no_bike_tree)
 
     assert len(res) == 0
 
