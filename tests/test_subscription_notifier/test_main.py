@@ -6,3 +6,6 @@ async def test_main_smoke():
 
     assert True
     assert res == 2
+
+
+# todo подробную проверку

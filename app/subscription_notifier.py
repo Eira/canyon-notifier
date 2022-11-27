@@ -16,7 +16,7 @@ from app.models import Bike, Match, SubscriptionBikeFamily
 from app.settings import app_settings
 
 
-def get_notification_bikes(
+def _get_notification_bikes(
     subscription_list: List[SubscriptionBikeFamily],
     available_bike_list: List[Bike],
 ) -> List[Match]:
@@ -35,17 +35,30 @@ def get_notification_bikes(
     return list_of_matches
 
 
-async def send_subscription_message(subscription_to_send: Match) -> bool:
+async def _send_subscription_message(subscription_to_send: Match) -> bool:
     """Get data about the available bike which user subscribed at and notify user about it."""
     message = '\n'.join((
         f'{subscription_to_send.bike.title} is available in the stock!',
         f'{subscription_to_send.bike.link}',
     ))
 
-    temp = await bot.send_message(subscription_to_send.subscription.chat_id, message)
-
+    await bot.send_message(subscription_to_send.subscription.chat_id, message)
 
     return True
+
+
+async def _notify_users(list_of_matches: list[Match]) -> int:
+    """Send messages about available bikes to subscribers when bikes appear in the store. Returns number of sent messages."""
+    cnt_messages = 0
+    for match in list_of_matches:
+        try:
+            await _send_subscription_message(match)
+        except BadRequest:
+            logging.warning('Chat is not found.')
+            await storage.delete_subscription(match.subscription.subscribe_id)
+        cnt_messages += 1
+
+    return cnt_messages
 
 
 async def main(throttling_time: float, amount_of_iterations: int) -> int:
@@ -63,17 +76,10 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
 
         subscription_list = await storage.get_subscriptions()
         available_bike_list = await storage.get_available_bike_list()
+        list_of_matches = _get_notification_bikes(subscription_list, available_bike_list)
 
-        list_of_matches = get_notification_bikes(subscription_list, available_bike_list)
         if list_of_matches:
-            cnt_messages = 0
-            for match in list_of_matches:
-                try:
-                    await send_subscription_message(match)
-                except BadRequest:
-                    logging.warning('Chat is not found.')
-                    await storage.delete_subscription(match.subscription.subscribe_id)
-                cnt_messages += 1
+            cnt_messages = await _notify_users(list_of_matches)
             logging.info(f'{len(list_of_matches)} matches was found.')
             logging.info(f'{cnt_messages} messages was sent.')
 

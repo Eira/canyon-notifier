@@ -1,5 +1,5 @@
 from app.models import Bike, SubscriptionBikeFamily, Match
-from app.subscription_notifier import get_notification_bikes
+from app.subscription_notifier import _get_notification_bikes
 
 
 def test_get_notification_bikes_happy_path():
@@ -44,7 +44,7 @@ def test_get_notification_bikes_happy_path():
         ),
     ]
 
-    res = get_notification_bikes(subscription_list, available_bike_list)
+    res = _get_notification_bikes(subscription_list, available_bike_list)
 
     assert len(res) == 2
     assert isinstance(res, list)
@@ -86,7 +86,7 @@ def test_get_notification_bikes_empty_subscription_list():
         ),
     ]
 
-    res = get_notification_bikes(subscription_list, available_bike_list)
+    res = _get_notification_bikes(subscription_list, available_bike_list)
 
     assert res == []
 
@@ -111,6 +111,6 @@ def test_get_notification_bikes_empty_available_list():
     ]
     available_bike_list = []
 
-    res = get_notification_bikes(subscription_list, available_bike_list)
+    res = _get_notification_bikes(subscription_list, available_bike_list)
 
     assert res == []
