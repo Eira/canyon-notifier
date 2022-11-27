@@ -8,6 +8,8 @@ import asyncio
 import logging
 from typing import List
 
+from aiogram.utils.exceptions import BadRequest
+
 from app import storage
 from app.bot_runner import bot
 from app.models import Bike, Match, SubscriptionBikeFamily
@@ -40,7 +42,8 @@ async def send_subscription_message(subscription_to_send: Match) -> bool:
         f'{subscription_to_send.bike.link}',
     ))
 
-    await bot.send_message(subscription_to_send.subscription.chat_id, message)
+    temp = await bot.send_message(subscription_to_send.subscription.chat_id, message)
+
 
     return True
 
@@ -65,7 +68,11 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
         if list_of_matches:
             cnt_messages = 0
             for match in list_of_matches:
-                await send_subscription_message(match)
+                try:
+                    await send_subscription_message(match)
+                except BadRequest:
+                    logging.warning('Chat is not found.')
+                    await storage.delete_subscription(match.subscription.subscribe_id)
                 cnt_messages += 1
             logging.info(f'{len(list_of_matches)} matches was found.')
             logging.info(f'{cnt_messages} messages was sent.')

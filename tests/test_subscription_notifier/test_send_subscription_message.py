@@ -1,9 +1,12 @@
+import pytest
+from aiogram.utils.exceptions import ChatNotFound
+
 from app.models import Bike, SubscriptionBikeFamily, Match
 from app.subscription_notifier import send_subscription_message
 
 
-async def test_send_subscription_message_smoke():
-    # todo проверку на конкретное сообщение
+async def test_send_subscription_message_smoke(mocker):
+    mock = mocker.patch('app.subscription_notifier.bot.send_message')
     subscription_to_send = Match(
         Bike(
             id='spectral_125_cf_9',
@@ -26,10 +29,11 @@ async def test_send_subscription_message_smoke():
     res = await send_subscription_message(subscription_to_send)
 
     assert res is True
+    assert mock.call_count == 1
+    assert mock.call_args.args[1] == expected_message
 
 
 async def test_send_subscription_message_invalid_data():
-    #todo test на невалидные данные (невалидный пользователь)
     subscription_to_send = Match(
         Bike(
             id='spectral_125_cf_9',
@@ -40,9 +44,10 @@ async def test_send_subscription_message_invalid_data():
         ),
         SubscriptionBikeFamily(
             subscribe_id=12345678,
-            chat_id=915745042,
+            chat_id=-1,
             bike_family='Spectral',
         ),
     )
 
-    res = await send_subscription_message(subscription_to_send)
+    with pytest.raises(ChatNotFound, match='Chat not found'):
+        await send_subscription_message(subscription_to_send)
