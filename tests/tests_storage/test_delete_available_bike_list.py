@@ -1,7 +1,7 @@
 import pytest
 from aioredis import ResponseError
 
-from app.storage import get_available_bike_list, delete_available_bike_list
+from app.storage.available_bike_list import delete_available_bike_list, get_available_bike_list
 
 
 async def test_delete_available_bike_list_happy_path(fixture_empty_available_bike_list):

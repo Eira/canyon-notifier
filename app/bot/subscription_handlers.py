@@ -7,8 +7,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from app import storage
-from app.models import SubscriptionBikeFamily
+from app.storage import subscription as subscription_storage
 
 
 class CreateSubscription(StatesGroup):
@@ -39,7 +38,10 @@ async def cancel_subscription(message: types.Message, state: FSMContext) -> None
 
 async def process_subscription(message: types.Message, state: FSMContext) -> None:
     """Create the subscription."""
-    created_subscription: SubscriptionBikeFamily = await storage.create_subscription(message.chat.id, message.text)
+    created_subscription = await subscription_storage.create_subscription(
+        message.chat.id,
+        message.text,
+    )
 
     await state.finish()
     await message.reply(f'Got it! When "{created_subscription.bike_family}" will be available we will let you know!')
@@ -47,7 +49,7 @@ async def process_subscription(message: types.Message, state: FSMContext) -> Non
 
 async def show_subscriptions(message: types.Message) -> None:
     """Take all users subscription and show all subscriptions."""
-    list_of_subscriptions = await storage.get_subscriptions(message.chat.id)
+    list_of_subscriptions = await subscription_storage.get_subscriptions(message.chat.id)
 
     if list_of_subscriptions:
         btn_list_subscriptions: list = []
@@ -72,6 +74,6 @@ async def show_subscriptions(message: types.Message) -> None:
 async def delete_subscription(callback_query: types.CallbackQuery) -> None:
     """Delete selected subscription and show all the rest subscriptions."""
     subscription_id = int(callback_query.data.split(':')[1])
-    await storage.delete_subscription(subscription_id)
+    await subscription_storage.delete_subscription(subscription_id)
     await callback_query.answer('the subscription was deleted.')
     await show_subscriptions(callback_query.message)

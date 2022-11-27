@@ -6,8 +6,8 @@ It contains functions for create and update list of new available bikes.
 
 from typing import List
 
-from app import storage
 from app.models import Bike
+from app.storage.available_bike_list import save_new_available_bikes
 
 
 def get_new_available_bikes(old_catalog: List[Bike], actual_catalog: List[Bike]) -> List[Bike]:
@@ -31,6 +31,6 @@ async def update_available_bikes_list(old_catalog: List[Bike], actual_catalog: L
             actual_catalog,
         )
     if available_bikes_list:
-        await storage.save_new_available_bikes(available_bikes_list)
+        await save_new_available_bikes(available_bikes_list)
 
     return available_bikes_list

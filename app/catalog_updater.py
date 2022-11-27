@@ -3,11 +3,11 @@ import asyncio
 import logging
 from typing import List
 
-from app import storage
 from app.catalog.available_bike_list_operations import update_available_bikes_list
 from app.catalog.catalog_operations import get_canyon_catalog, update_catalog
 from app.models import Bike
 from app.settings import app_settings
+from app.storage.catalog import get_catalog
 
 
 async def main(throttling_time: float, amount_of_iterations: int) -> int:
@@ -34,7 +34,7 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
             logging.warning('empty catalog found!')
             continue
 
-        old_catalog = await storage.get_catalog()
+        old_catalog = await get_catalog()
 
         items_deleted, items_added = await update_catalog(actual_catalog)
         await update_available_bikes_list(old_catalog, actual_catalog)

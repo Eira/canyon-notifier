@@ -1,7 +1,7 @@
 import pytest
 from aioredis import ResponseError
 
-from app.storage import get_available_bike_list, save_new_available_bikes
+from app.storage.available_bike_list import save_new_available_bikes, get_available_bike_list
 
 
 async def test_save_new_available_bikes_happy_path(fixture_prefilled_available_bike_list):

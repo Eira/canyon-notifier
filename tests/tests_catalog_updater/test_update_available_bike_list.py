@@ -3,7 +3,7 @@ from app.models import Bike
 
 
 async def test_update_available_bike_list_happy_path(mocker):
-    mock = mocker.patch('app.storage.save_new_available_bikes')
+    mock = mocker.patch('app.catalog.available_bike_list_operations.save_new_available_bikes')
     old_bikes_list = [
         Bike(
             id='spectral_125_cf_9',
@@ -76,7 +76,7 @@ async def test_update_available_bike_list_empty_old_list():
 
 
 async def test_update_available_bike_list__empty_new_list(mocker):
-    mock = mocker.patch('app.storage.save_new_available_bikes')
+    mock = mocker.patch('app.catalog.available_bike_list_operations.save_new_available_bikes')
     old_bikes_list = [
         Bike(
             id='spectral_125_cf_9',

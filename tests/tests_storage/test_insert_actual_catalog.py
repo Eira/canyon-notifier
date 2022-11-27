@@ -1,7 +1,7 @@
 import pytest
 
 from app.models import Bike
-from app.storage import insert_actual_catalog
+from app.storage.catalog import insert_actual_catalog
 
 
 async def test_insert_actual_catalog_empty_catalog(fixture_empty_catalog):

@@ -1,5 +1,5 @@
 from app.models import SubscriptionBikeFamily
-from app.storage import get_subscriptions, delete_subscription
+from app.storage.subscription import get_subscriptions, delete_subscription
 
 
 async def test_delete_subscription_happy_path(fixture_prefilled_subscription: SubscriptionBikeFamily):

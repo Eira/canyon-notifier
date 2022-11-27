@@ -1,6 +1,4 @@
-import pytest
-
-from app.storage import clear_catalog, get_catalog
+from app.storage.catalog import clear_catalog, get_catalog
 
 
 async def test_clear_catalog_empty(fixture_empty_catalog):

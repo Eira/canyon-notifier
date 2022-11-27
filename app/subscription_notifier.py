@@ -10,10 +10,12 @@ from typing import List
 
 from aiogram.utils.exceptions import BadRequest
 
-from app import storage
+from app.bot.subscription_handlers import delete_subscription
 from app.bot_runner import bot
 from app.models import Bike, Match, SubscriptionBikeFamily
 from app.settings import app_settings
+from app.storage.available_bike_list import delete_available_bike_list, get_available_bike_list
+from app.storage.subscription import get_subscriptions
 
 
 def _get_notification_bikes(
@@ -55,7 +57,7 @@ async def _notify_users(list_of_matches: list[Match]) -> int:
             await _send_subscription_message(match)
         except BadRequest:
             logging.warning('Chat is not found.')
-            await storage.delete_subscription(match.subscription.subscribe_id)
+            await delete_subscription(match.subscription.subscribe_id)
         cnt_messages += 1
 
     return cnt_messages
@@ -74,8 +76,8 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
         if cnt:
             await asyncio.sleep(throttling_time)
 
-        subscription_list = await storage.get_subscriptions()
-        available_bike_list = await storage.get_available_bike_list()
+        subscription_list = await get_subscriptions()
+        available_bike_list = await get_available_bike_list()
         list_of_matches = _get_notification_bikes(subscription_list, available_bike_list)
 
         if list_of_matches:
@@ -83,7 +85,7 @@ async def main(throttling_time: float, amount_of_iterations: int) -> int:
             logging.info(f'{len(list_of_matches)} matches was found.')
             logging.info(f'{cnt_messages} messages was sent.')
 
-            await storage.delete_available_bike_list([
+            await delete_available_bike_list([
                 bike.id for bike in available_bike_list
             ])
 

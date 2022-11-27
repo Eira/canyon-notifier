@@ -1,5 +1,5 @@
 from app.models import SubscriptionBikeFamily
-from app.storage import get_subscriptions
+from app.storage.subscription import get_subscriptions
 
 
 async def test_get_subscriptions_happy_path(fixture_prefilled_subscription: SubscriptionBikeFamily):

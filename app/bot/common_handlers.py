@@ -7,7 +7,7 @@ from aiogram import types
 from aiogram.utils.markdown import hlink
 
 from app.models import Bike, CatalogFamily
-from app.storage import get_catalog
+from app.storage.catalog import get_catalog
 
 
 async def send_welcome(message: types.Message) -> None:

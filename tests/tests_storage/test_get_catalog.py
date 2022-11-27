@@ -1,5 +1,5 @@
 from app.models import Bike
-from app.storage import get_catalog
+from app.storage.catalog import get_catalog
 
 
 async def test_get_catalog_happy_path(fixture_prefilled_catalog):

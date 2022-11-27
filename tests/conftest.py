@@ -4,7 +4,9 @@ from typing import List
 import pytest
 
 from app.models import Bike, SubscriptionBikeFamily
-from app.storage import clear_catalog, insert_actual_catalog, create_subscription, delete_subscription, get_subscriptions, delete_available_bike_list, save_new_available_bikes
+from app.storage.available_bike_list import delete_available_bike_list, save_new_available_bikes
+from app.storage.catalog import clear_catalog, insert_actual_catalog
+from app.storage.subscription import get_subscriptions, delete_subscription, create_subscription
 
 
 @pytest.fixture()

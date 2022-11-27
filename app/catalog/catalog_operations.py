@@ -9,9 +9,9 @@ from typing import List, Tuple
 import httpx
 from lxml import etree
 
-from app import storage
 from app.models import Bike
 from app.settings import app_settings
+from app.storage.catalog import clear_catalog, insert_actual_catalog
 
 
 def get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
@@ -73,8 +73,8 @@ def parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS4
 
 async def update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
     """Clear the old catalog in database and insert actual. Return amount of deleted and added items."""
-    items_deleted: int = await storage.clear_catalog()
-    items_added: int = await storage.insert_actual_catalog(actual_catalog)
+    items_deleted: int = await clear_catalog()
+    items_added: int = await insert_actual_catalog(actual_catalog)
 
     return items_deleted, items_added
 
