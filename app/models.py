@@ -1,4 +1,4 @@
-"""Description of available canyon bike item."""
+"""Whole project types."""
 
 from dataclasses import dataclass
 from typing import List
