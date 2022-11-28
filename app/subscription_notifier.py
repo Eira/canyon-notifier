@@ -17,6 +17,38 @@ from app.storage.available_bike_list import delete_available_bike_list, get_avai
 from app.storage.subscription import delete_subscription, get_subscriptions
 
 
+async def main(throttling_time: float, amount_of_iterations: int) -> int:
+    """
+    Do the main runner of subscription notifier worker.
+
+    Get data about new available bikes, users subscribed at.
+    Send messages about it.
+    Return amount of iterations.
+    """
+    cnt = 0
+    while cnt < amount_of_iterations or not amount_of_iterations:
+        if cnt:
+            await asyncio.sleep(throttling_time)
+
+        subscription_list = await get_subscriptions()
+        available_bike_list = await get_available_bike_list()
+        if available_bike_list:
+            await delete_available_bike_list([
+                bike.id for bike in available_bike_list
+            ])
+
+        list_of_matches = _get_notification_bikes(subscription_list, available_bike_list)
+        if list_of_matches:
+            cnt_messages = await _notify_users(list_of_matches)
+            logging.info(f'{len(list_of_matches)} matches was found.')
+            logging.info(f'{cnt_messages} messages was sent.')
+
+        logging.info(f'Current iteration is {cnt}')
+        cnt += 1
+
+    return cnt
+
+
 def _get_notification_bikes(
     subscription_list: List[SubscriptionBikeFamily],
     available_bike_list: List[Bike],
@@ -60,38 +92,6 @@ async def _notify_users(list_of_matches: list[Match]) -> int:
         cnt_messages += 1
 
     return cnt_messages
-
-
-async def main(throttling_time: float, amount_of_iterations: int) -> int:
-    """
-    Do the main runner of subscription notifier worker.
-
-    Get data about new available bikes, users subscribed at.
-    Send messages about it.
-    Return amount of iterations.
-    """
-    cnt = 0
-    while cnt < amount_of_iterations or not amount_of_iterations:
-        if cnt:
-            await asyncio.sleep(throttling_time)
-
-        subscription_list = await get_subscriptions()
-        available_bike_list = await get_available_bike_list()
-        list_of_matches = _get_notification_bikes(subscription_list, available_bike_list)
-
-        if list_of_matches:
-            cnt_messages = await _notify_users(list_of_matches)
-            logging.info(f'{len(list_of_matches)} matches was found.')
-            logging.info(f'{cnt_messages} messages was sent.')
-
-            await delete_available_bike_list([
-                bike.id for bike in available_bike_list
-            ])
-
-        logging.info(f'Current iteration is {cnt}')
-        cnt += 1
-
-    return cnt
 
 
 if __name__ == '__main__':

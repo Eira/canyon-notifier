@@ -78,3 +78,11 @@ async def fixture_prefilled_available_bike_list(fixture_empty_available_bike_lis
     await save_new_available_bikes(fixture_prefilled_catalog)
 
     yield fixture_prefilled_catalog
+
+
+@pytest.fixture()
+async def fixture_prefilled_subscription_for_match_list(fixture_prefilled_available_bike_list, fixture_fresh_chat_id):
+    for bike in fixture_prefilled_available_bike_list:
+        await create_subscription(fixture_fresh_chat_id, bike.family)
+
+    yield
