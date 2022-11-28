@@ -23,7 +23,7 @@ async def test_get_catalog_happy_path(fixture_prefilled_catalog):
     ]
 
 
-async def test_get_catalog_happy_path(fixture_empty_catalog):
+async def test_get_catalog_empty_catalog(fixture_empty_catalog):
     res = await get_catalog()
 
     assert res == []

@@ -13,6 +13,8 @@ async def test_bot_send_welcome_happy_path():
         'I will show you which canyon bicycles are available in the store.',
         '/catalog - to see all catalog.',
         '/subscribe - to get the message, when the bike family you want in the stock.',
+        '/unsubscribe - not to receive messages about bike family.',
+        '/subscriptions_list - check if you are waiting for any messages.',
     ))
     message_mock = AsyncMock()
 
