@@ -10,12 +10,11 @@ from typing import List
 
 from aiogram.utils.exceptions import BadRequest
 
-from app.bot.subscription_handlers import delete_subscription
 from app.bot_runner import bot
 from app.models import Bike, Match, SubscriptionBikeFamily
 from app.settings import app_settings
 from app.storage.available_bike_list import delete_available_bike_list, get_available_bike_list
-from app.storage.subscription import get_subscriptions
+from app.storage.subscription import delete_subscription, get_subscriptions
 
 
 def _get_notification_bikes(

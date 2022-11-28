@@ -14,7 +14,26 @@ from app.settings import app_settings
 from app.storage.catalog import clear_catalog, insert_actual_catalog
 
 
-def get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
+def get_canyon_catalog() -> List[Bike]:
+    """Get html from the web page. Return list of bikes in elements."""
+    html_tree = _get_canyon_catalog_html()
+    return _parse_canyon_catalog(html_tree)
+
+
+async def update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
+    """Clear the old catalog in database and insert actual. Return amount of deleted and added items."""
+    items_deleted: int = await clear_catalog()
+    items_added: int = await insert_actual_catalog(actual_catalog)
+
+    return items_deleted, items_added
+
+
+def _normalize_bike_id(bike_title: str) -> str:
+    """Bring the id to the same view: lowercase, underscore instead of whitespace. Return bike id normalized."""
+    return bike_title.replace(' ', '_').lower()
+
+
+def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     """Get HTML from the canyon catalog web page. Return HTML."""
     query_params = {
         'cgid': 'orderable-bikes',
@@ -37,12 +56,7 @@ def get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     return etree.HTML(html_source)
 
 
-def normalize_bike_id(bike_title: str) -> str:
-    """Bring the id to the same view: lowercase, underscore instead of whitespace. Return bike id normalized."""
-    return bike_title.replace(' ', '_').lower()
-
-
-def parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437, WPS210
+def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437, WPS210
     """Make the list of bike elements from HTML. Return list of bikes in elements."""
     output: List[Bike] = []
 
@@ -60,7 +74,7 @@ def parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS4
             bike_model = ' '.join(bike_title_list[1:])
 
         bike_item: Bike = Bike(
-            id=normalize_bike_id(bike_name_element.get('title')),
+            id=_normalize_bike_id(bike_name_element.get('title')),
             title=bike_name_element.get('title'),
             link=bike_name_element.get('href'),
             family=bike_family,
@@ -69,17 +83,3 @@ def parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS4
         output.append(bike_item)
 
     return output
-
-
-async def update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
-    """Clear the old catalog in database and insert actual. Return amount of deleted and added items."""
-    items_deleted: int = await clear_catalog()
-    items_added: int = await insert_actual_catalog(actual_catalog)
-
-    return items_deleted, items_added
-
-
-def get_canyon_catalog() -> List[Bike]:
-    """Get html from the web page. Return list of bikes in elements."""
-    html_tree = get_canyon_catalog_html()
-    return parse_canyon_catalog(html_tree)

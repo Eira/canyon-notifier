@@ -1,4 +1,4 @@
-from app.catalog.available_bike_list_operations import get_new_available_bikes
+from app.catalog.available_bike_list_operations import _get_new_available_bikes
 from app.models import Bike
 
 
@@ -36,7 +36,7 @@ def test_get_new_available_bikes_happy_path():
         ),
     ]
 
-    res = get_new_available_bikes(old_bikes_list, new_bikes_list)
+    res = _get_new_available_bikes(old_bikes_list, new_bikes_list)
 
     assert res == [
         Bike(
@@ -68,7 +68,7 @@ def test_get_new_available_bikes_empty_old_list():
         ),
     ]
 
-    res = get_new_available_bikes(old_bikes_list, new_bikes_list)
+    res = _get_new_available_bikes(old_bikes_list, new_bikes_list)
 
     assert res == new_bikes_list
 
@@ -92,7 +92,7 @@ def test_get_new_available_bikes_empty_new_list():
     ]
     new_bikes_list = []
 
-    res = get_new_available_bikes(old_bikes_list, new_bikes_list)
+    res = _get_new_available_bikes(old_bikes_list, new_bikes_list)
 
     assert res == []
 
@@ -101,6 +101,6 @@ def test_get_new_available_bikes_empty_all_lists():
     old_bikes_list = []
     new_bikes_list = []
 
-    res = get_new_available_bikes(old_bikes_list, new_bikes_list)
+    res = _get_new_available_bikes(old_bikes_list, new_bikes_list)
 
     assert res == []
