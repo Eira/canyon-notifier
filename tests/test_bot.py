@@ -4,6 +4,7 @@ from app import storage
 from app.bot.common_handlers import send_welcome, show_catalog
 from app.bot.subscription_handlers import start_subscription, process_subscription, cancel_subscription, show_subscriptions, delete_subscription
 from app.bot_runner import main
+from app.storage.subscription import get_subscriptions
 
 
 async def test_bot_send_welcome_happy_path():
@@ -12,6 +13,7 @@ async def test_bot_send_welcome_happy_path():
         'I will show you which canyon bicycles are available in the store.',
         '/catalog - to see all catalog.',
         '/subscribe - to get the message, when the bike family you want in the stock.',
+        '/subscriptions_list - check if you are waiting for any messages.',
     ))
     message_mock = AsyncMock()
 
@@ -67,7 +69,7 @@ async def test_process_subscription_smoke(mocker, fixture_fresh_chat_id):
     message_mock.chat.id = fixture_fresh_chat_id
     message_mock.text = 'Bike_test'
     state_mock = AsyncMock()
-    mock_usage_counter = mocker.spy(storage, 'create_subscription')
+    mock_usage_counter = mocker.spy(storage.subscription, 'create_subscription')
 
     expected_reply = f'Got it! When "{message_mock.text}" will be available we will let you know!'
 
@@ -119,7 +121,7 @@ async def test_delete_subscription_happy_path(fixture_prefilled_subscription):
     callback_query_mock.data = f'delete_subscription:{fixture_prefilled_subscription.subscribe_id}'
 
     res = await delete_subscription(callback_query=callback_query_mock)
-    subscriptions_list = await storage.get_subscriptions(fixture_prefilled_subscription.chat_id)
+    subscriptions_list = await get_subscriptions(fixture_prefilled_subscription.chat_id)
 
     assert res is None
     assert subscriptions_list == []

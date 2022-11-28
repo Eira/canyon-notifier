@@ -3,8 +3,10 @@ from typing import List
 
 import pytest
 
-from app.bike_model import Bike, SubscriptionBikeFamily
-from app.storage import clear_catalog, insert_actual_catalog, create_subscription, delete_subscription, get_subscriptions
+from app.models import Bike, SubscriptionBikeFamily
+from app.storage.available_bike_list import delete_available_bike_list, save_new_available_bikes
+from app.storage.catalog import clear_catalog, insert_actual_catalog
+from app.storage.subscription import get_subscriptions, delete_subscription, create_subscription
 
 
 @pytest.fixture()
@@ -62,3 +64,25 @@ async def fixture_prefilled_subscription(fixture_fresh_chat_id) -> SubscriptionB
     subscription_item = await create_subscription(fixture_fresh_chat_id, bike_family)
     yield subscription_item
 
+
+@pytest.fixture()
+async def fixture_empty_available_bike_list():
+    await delete_available_bike_list()
+    yield
+    await delete_available_bike_list()
+
+
+@pytest.fixture()
+async def fixture_prefilled_available_bike_list(fixture_empty_available_bike_list, fixture_prefilled_catalog) -> List[Bike]:
+
+    await save_new_available_bikes(fixture_prefilled_catalog)
+
+    yield fixture_prefilled_catalog
+
+
+@pytest.fixture()
+async def fixture_prefilled_subscription_for_match_list(fixture_prefilled_available_bike_list, fixture_fresh_chat_id):
+    for bike in fixture_prefilled_available_bike_list:
+        await create_subscription(fixture_fresh_chat_id, bike.family)
+
+    yield

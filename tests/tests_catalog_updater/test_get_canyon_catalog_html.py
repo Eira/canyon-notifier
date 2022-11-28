@@ -1,4 +1,4 @@
-from app.catalog_updater import _get_canyon_catalog_html
+from app.catalog.catalog_operations import _get_canyon_catalog_html
 
 
 def test_get_canyon_catalog_html():

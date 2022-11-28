@@ -6,8 +6,8 @@ from typing import Generator, List
 from aiogram import types
 from aiogram.utils.markdown import hlink
 
-from app.bike_model import Bike, CatalogFamily
-from app.storage import get_catalog
+from app.models import Bike, CatalogFamily
+from app.storage.catalog import get_catalog
 
 
 async def send_welcome(message: types.Message) -> None:
@@ -17,8 +17,7 @@ async def send_welcome(message: types.Message) -> None:
         'I will show you which canyon bicycles are available in the store.',
         '/catalog - to see all catalog.',
         '/subscribe - to get the message, when the bike family you want in the stock.',
-        # '/unsubscribe - not to receive messages about bike family.',
-        # '/subscriptions_list - check if you waiting for any messages.',
+        '/subscriptions_list - check if you are waiting for any messages.',
     ))
 
     await message.answer(answer_text)
