@@ -1,9 +1,10 @@
 # [Canyon notifier telegram bot](https://t.me/CanyonNotifierBot)
 
 [![tests](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml)
-[![flake8](https://github.com/Eira/canyon-notifier/actions/workflows/linters.yml/badge.svg?branch=master)](https://github.com/Eira/canyon-notifier/actions/workflows/linters.yml)
+[![linters](https://github.com/Eira/canyon-notifier/actions/workflows/linters.yml/badge.svg?branch=master)](https://github.com/Eira/canyon-notifier/actions/workflows/linters.yml)
 
-Simple telegram bot that shows actual catalog of available bicycles at [canyon.com](https://www.canyon.com/cs-cz/buying-tools/in-stock-bikes/).
+Telegram bot that shows actual catalog of available bicycles at [canyon.com](https://www.canyon.com).
+
 You can also subscribe to a newsletter when a particular model or family of bikes becomes available.
 
 ---
@@ -35,17 +36,17 @@ bot_token=5435048925:AAE0CdbhQL7baW-EZmtVZ0nbyNbEtCQWUcE
 EOF
 ```
 
-### Local run app
-```
-python -m app.catalog_updater
-```
-
 ### Local run Telegram bot
 ```
 python -m app.bot_runner
 ```
 
-### Local run Subscription notifier
+### Local run catalog updater
+```
+python -m app.catalog_updater
+```
+
+### Local run subscription notifier
 ```
 python -m app.subscription_notifier
 ```
@@ -55,11 +56,10 @@ python -m app.subscription_notifier
 $ pytest --cov=app
 ```
 
-### Local run flake
+### Local run linters
 ```
 poetry run flake8 app/
-```
-### Local run MyPy
-```
+
 poetry run mypy app/
 ```
+
