@@ -36,9 +36,7 @@ def _normalize_bike_id(bike_title: str) -> str:
 def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     """Get HTML from the canyon catalog web page. Return HTML."""
     query_params = {
-        'cgid': 'orderable-bikes',
-        'prefn1': 'isInStock',
-        'prefv1': 'In-stock',
+        'srule': 'sort_master_availability',
         'start': '0',
         'sz': '300',
         'searchredirect': 'false',
@@ -47,7 +45,7 @@ def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     }
 
     catalog_response = httpx.get(
-        'https://www.canyon.com/on/demandware.store/Sites-RoW-Site/en_CZ/Search-IncludeProductGrid',
+        'https://www.canyon.com/en-cz/buying-tools/in-stock-bikes/',
         timeout=app_settings.timeout,
         params=query_params,
     )
@@ -61,9 +59,11 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
     output: List[Bike] = []
 
     html_bike_list = html_tree.cssselect('.productGrid__listItem')
-
     for list_item in html_bike_list:
-        bike_name_element: etree.Element = list_item.cssselect('.productTile__link')[0]
+        try:
+            bike_name_element: etree.Element = list_item.cssselect('.productTileDefault__productName')[0]
+        except IndexError:
+            continue
 
         bike_title_list = bike_name_element.get('title').split(' ')
         if bike_name_element.get('title').startswith('Grand Canyon'):
