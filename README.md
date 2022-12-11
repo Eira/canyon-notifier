@@ -1,6 +1,7 @@
 # [Canyon notifier telegram bot](https://t.me/CanyonNotifierBot)
 
 [![tests](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Eira/canyon-notifier/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/github/Eira/canyon-notifier/branch/master/graph/badge.svg?token=4D3V7NMX9Q)](https://codecov.io/github/Eira/canyon-notifier)
 [![linters](https://github.com/Eira/canyon-notifier/actions/workflows/linters.yml/badge.svg?branch=master)](https://github.com/Eira/canyon-notifier/actions/workflows/linters.yml)
 
 Telegram bot that shows actual catalog of available bicycles at [canyon.com](https://www.canyon.com).

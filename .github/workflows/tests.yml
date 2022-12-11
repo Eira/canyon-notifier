@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.9', '3.10']
+        python-version: ['3.9']
     steps:
     - uses: actions/checkout@v2
 
@@ -30,7 +30,10 @@ jobs:
     - name: Run tests
       run: |
         echo 'bot_token=${{ secrets.TELEGRAM_BOT_TOKEN_TEST }}' > .env
-        poetry run pytest -ra -v --cov=app
+        poetry run pytest --cov app --cov-report=xml
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1
+      with:
+        fail_ci_if_error: true
+        files: ./coverage.xml
