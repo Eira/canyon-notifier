@@ -31,3 +31,6 @@ jobs:
       run: |
         echo 'bot_token=${{ secrets.TELEGRAM_BOT_TOKEN_TEST }}' > .env
         poetry run pytest -ra -v --cov=app
+
+    - name: Codecov
+      uses: codecov/codecov-action@v3.1.1
