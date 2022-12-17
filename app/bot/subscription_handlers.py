@@ -7,7 +7,9 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
+from app.settings import app_settings
 from app.storage import subscription as subscription_storage
+from app.storage.subscription import get_subscription_amount
 
 
 class CreateSubscription(StatesGroup):
@@ -17,12 +19,20 @@ class CreateSubscription(StatesGroup):
 
 
 async def start_subscription(message: types.Message) -> None:
-    """Ask a bike family name."""
-    reply_text = '\n'.join((
-        'Please, write the bike family name.When it will be available we will let you know!',
-        '/cancel - to cancel the action.',
-    ))
-    await CreateSubscription.family_name.set()
+    """Check amount of subscriptions.If it's ok, ask a bike family name."""
+    subscription_amount = await get_subscription_amount(message.chat.id)
+
+    if subscription_amount >= app_settings.max_amount_subscriptions:
+        reply_text = '\n'.join((
+            'You have already 10 subscriptions.',
+            'Delete some to create a new one, please.',
+        ))
+    else:
+        reply_text = '\n'.join((
+            'Please, write the bike family name.When it will be available we will let you know!',
+            '/cancel - to cancel the action.',
+        ))
+        await CreateSubscription.family_name.set()
     await message.reply(reply_text)
 
 

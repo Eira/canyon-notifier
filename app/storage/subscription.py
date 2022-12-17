@@ -50,6 +50,11 @@ async def get_subscriptions(chat_id: Optional[int] = None) -> List[SubscriptionB
     return subscriptions_list
 
 
+async def get_subscription_amount(chat_id: int) -> int:
+    """Count how many subscription user has. Return subscription amount."""
+    return len( await get_subscriptions(chat_id))
+
+
 async def delete_subscription(subscribe_id: int) -> bool:
     """Delete concrete subscriptions in database. Return amount of deleted subscriptions."""
     key_name = SUBSCRIPTION_BY_ID_KEY.format(subscribe_id)
