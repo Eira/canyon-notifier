@@ -14,7 +14,7 @@ class AppSettings(BaseSettings):
     amount_of_iterations: int = Field(0, description='сколько раз будет запускаться воркер обновления каталога в фоне.')
     bot_token: str
     telegram_max_entities: int = Field(50, description='количество ссылок в  одном сообщении телеграм бота.')
-    max_amount_subscriptions: int = Field(10, description='максимальное количестов подписок, которое может создать пользователь')
+    max_amount_subscriptions: int = Field(10, description='максимальное количестов подписок пользователя')
 
 
 app_settings = AppSettings(
