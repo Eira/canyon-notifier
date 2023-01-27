@@ -73,10 +73,14 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
             bike_family = bike_title_list[0]
             bike_model = ' '.join(bike_title_list[1:])
 
+        link: str = bike_name_element.get('href')
+        if not link.startswith('http'):
+            link = f'https://www.canyon.com{link}'
+
         bike_item: Bike = Bike(
             id=_normalize_bike_id(bike_name_element.get('title')),
             title=bike_name_element.get('title'),
-            link=bike_name_element.get('href'),
+            link=link,
             family=bike_family,
             model=bike_model,
         )
