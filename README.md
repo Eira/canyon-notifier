@@ -8,6 +8,10 @@ Telegram bot that shows actual catalog of available bicycles at [canyon.com](htt
 
 You can also subscribe to a newsletter when a particular model or family of bikes becomes available.
 
+[reddit post](https://vas3k.club/thread/18283/#comment-25634871-b9d2-4cb4-9359-2b38ac818446) 
+[vas3k.club post](https://vas3k.club/thread/18283/#comment-25634871-b9d2-4cb4-9359-2b38ac818446) 
+[vc.ru post](https://vas3k.club/thread/18283/#comment-25634871-b9d2-4cb4-9359-2b38ac818446) 
+
 ---
 
 
