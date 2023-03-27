@@ -45,7 +45,7 @@ def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     }
 
     catalog_response = httpx.get(
-        'https://www.canyon.com/en-cz/buying-tools/in-stock-bikes/',
+        'https://www.canyon.com/en-de/buying-tools/in-stock-bikes/',
         timeout=app_settings.timeout,
         params=query_params,
     )
