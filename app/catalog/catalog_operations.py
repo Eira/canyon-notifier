@@ -67,25 +67,29 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
         except IndexError:
             continue
 
-        bike_title_list = bike_name_element.get('title').split(' ')
-        if bike_name_element.get('title').startswith('Grand Canyon'):
-            bike_family = f'{bike_title_list[0]} {bike_title_list[1]}'
-            bike_model = ' '.join(bike_title_list[2:])
-        else:
-            bike_family = bike_title_list[0]
-            bike_model = ' '.join(bike_title_list[1:])
+        size_list = list_item.cssselect('.productTileBadges__listItem')[0].text.replace('Available to buy in ', '').strip().split('|')
+        for size in size_list:
+            bike_title_list = bike_name_element.get('title').split(' ')
+            if bike_name_element.get('title').startswith('Grand Canyon'):
+                bike_family = f'{bike_title_list[0]} {bike_title_list[1]}'
+                bike_model = ' '.join(bike_title_list[2:])
+            else:
+                bike_family = bike_title_list[0]
+                bike_model = ' '.join(bike_title_list[1:])
 
-        link: str = bike_name_element.get('href')
-        if not link.startswith('http'):
-            link = f'https://www.canyon.com{link}'
+            link: str = bike_name_element.get('href')
+            if not link.startswith('http'):
+                link = f'https://www.canyon.com{link}'
 
-        bike_item: Bike = Bike(
-            id=_normalize_bike_id(bike_name_element.get('title')),
-            title=bike_name_element.get('title'),
-            link=link,
-            family=bike_family,
-            model=bike_model,
-        )
-        output.append(bike_item)
+            bike_item: Bike = Bike(
+                id=f"{_normalize_bike_id(bike_name_element.get('title'))} {size}",
+                title=bike_name_element.get('title'),
+                link=link,
+                family=bike_family,
+                model=bike_model,
+                size=size,
+            )
+            output.append(bike_item)
+            print(bike_item)
 
     return output
