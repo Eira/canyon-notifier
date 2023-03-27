@@ -42,6 +42,8 @@ def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
         'searchredirect': 'false',
         'pn': '1',
         'format': 'ajax',
+        'prefn1': 'pc_rahmengroesse',
+        'prefv1': '3XS|2XS|XS|S|M|L|XL|2XL',
     }
 
     catalog_response = httpx.get(
