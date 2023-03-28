@@ -28,9 +28,17 @@ async def update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
     return items_deleted, items_added
 
 
-def _normalize_bike_id(bike_title: str) -> str:
-    """Bring the id to the same view: lowercase, underscore instead of whitespace. Return bike id normalized."""
-    return bike_title.replace(' ', '_').lower()
+def _normalize_bike_id(bike_title: str, bike_size: str) -> str:
+    """Bring the id to the same view: lowercase, underscore instead of whitespace + bike size. Return bike id."""
+    if bike_title == '' or bike_size == '':
+        raise RuntimeError('No bike title or bike size.')
+
+    bike_id = "{title}_{size}"
+
+    return bike_id.format(
+        title=bike_title.replace(' ', '_').lower(),
+        size=bike_size.lower(),
+    )
 
 
 def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
@@ -67,8 +75,13 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
         except IndexError:
             continue
 
-        size_list = list_item.cssselect('.productTileBadges__listItem')[0].text.replace('Available to buy in ', '').strip().split('|')
-        for size in size_list:
+        sizes = list_item.cssselect(
+            '.productTileBadges__listItem',
+        )[0].text.replace(
+            'Available to buy in ',
+            '',
+        ).strip()
+        for size in sizes.split('|'):
             bike_title_list = bike_name_element.get('title').split(' ')
             if bike_name_element.get('title').startswith('Grand Canyon'):
                 bike_family = f'{bike_title_list[0]} {bike_title_list[1]}'
@@ -82,7 +95,7 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
                 link = f'https://www.canyon.com{link}'
 
             bike_item: Bike = Bike(
-                id=f"{_normalize_bike_id(bike_name_element.get('title'))} {size}",
+                id=_normalize_bike_id(bike_name_element.get('title'), size),
                 title=bike_name_element.get('title'),
                 link=link,
                 family=bike_family,
@@ -90,6 +103,5 @@ def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS
                 size=size,
             )
             output.append(bike_item)
-            print(bike_item)
 
     return output
