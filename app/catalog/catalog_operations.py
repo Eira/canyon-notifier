@@ -33,7 +33,7 @@ def _normalize_bike_id(bike_title: str, bike_size: str) -> str:
     if bike_title == '' or bike_size == '':
         raise RuntimeError('No bike title or bike size.')
 
-    bike_id = "{title}_{size}"
+    bike_id = '{title}_{size}'
 
     return bike_id.format(
         title=bike_title.replace(' ', '_').lower(),
