@@ -212,7 +212,7 @@ or from 74,71 €/Mo.
     assert isinstance(res, list)
     assert len(res) == 1
     assert isinstance(res[0], Bike)
-    assert res[0].id == 'spectral:on_cf_7 L'
+    assert res[0].id == 'spectral:on_cf_7_l'
     assert res[0].title == 'Spectral:ON CF 7'
     assert res[0].link == 'https://www.canyon.com/en-de/electric-bikes/electric-mountain-bikes/spectral-on/spectral-on-cf/spectral-on-cf-7/3117.html?dwvar_3117_pv_rahmenfarbe=VT'
     assert res[0].family == 'Spectral:ON'
@@ -677,19 +677,19 @@ or from 74,71 €/Mo.
     assert isinstance(res, list)
     assert len(res) == 3
     assert isinstance(res[0], Bike)
-    assert res[0].id == 'spectral:on_cf_7 L'
+    assert res[0].id == 'spectral:on_cf_7_l'
     assert res[0].title == 'Spectral:ON CF 7'
     assert res[0].link == 'https://www.canyon.com/en-de/electric-bikes/electric-mountain-bikes/spectral-on/spectral-on-cf/spectral-on-cf-7/3117.html?dwvar_3117_pv_rahmenfarbe=VT'
     assert res[0].family == 'Spectral:ON'
     assert res[0].model == 'CF 7'
     assert res[0].size == 'L'
-    assert res[1].id == 'spectral:on_cf_8 L'
+    assert res[1].id == 'spectral:on_cf_8_l'
     assert res[1].title == 'Spectral:ON CF 8'
     assert res[1].link == 'https://www.canyon.com/en-de/electric-bikes/electric-mountain-bikes/spectral-on/spectral-on-cf/spectral-on-cf-8/3116.html?dwvar_3116_pv_rahmenfarbe=BK'
     assert res[1].family == 'Spectral:ON'
     assert res[1].model == 'CF 8'
     assert res[0].size == 'L'
-    assert res[2].id == 'spectral:on_cf_8 XL'
+    assert res[2].id == 'spectral:on_cf_8_xl'
     assert res[2].title == 'Spectral:ON CF 8'
     assert res[2].link == 'https://www.canyon.com/en-de/electric-bikes/electric-mountain-bikes/spectral-on/spectral-on-cf/spectral-on-cf-8/3116.html?dwvar_3116_pv_rahmenfarbe=BK'
     assert res[2].family == 'Spectral:ON'
