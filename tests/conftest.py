@@ -10,29 +10,57 @@ from app.storage.subscription import get_subscriptions, delete_subscription, cre
 
 
 @pytest.fixture()
+def fixture_bike_item_1():
+    bike_item_1 = Bike(
+            id='spectral_125_cf_9_m',
+            title='Spectral 125 CF 9',
+            link='https://www.canyon.com/en-de/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR',
+            family='Spectral',
+            model='125 CF 9',
+            size='M',
+        )
+    yield bike_item_1
+
+
+@pytest.fixture()
+def fixture_bike_item_2():
+    bike_item_2 = Bike(
+            id='exceed_cf_7_l',
+            title='Exceed CF 7',
+            link='https://www.canyon.com/en-de/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
+            family='Exceed',
+            model='CF 7',
+            size='L',
+        )
+    yield bike_item_2
+
+
+@pytest.fixture()
+def fixture_bike_item_3():
+    bike_item_3 = Bike(
+            id='exceed_cf_8_s',
+            title='Exceed CF 8',
+            link='https://www.canyon.com/en-de/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-8/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
+            family='Exceed',
+            model='CF 8',
+            size='S',
+        )
+    yield bike_item_3
+
+
+@pytest.fixture()
 async def fixture_empty_catalog():
     await clear_catalog()
     yield
 
 
 @pytest.fixture()
-async def fixture_prefilled_catalog(fixture_empty_catalog) -> List[Bike]:
-    bikes_list = [
-        Bike(
-            id='spectral_125_cf_9',
-            title='Spectral 125 CF 9',
-            link='https://www.canyon.com/en-cz/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR',
-            family='Spectral',
-            model='125 CF 9',
-        ),
-        Bike(
-            id='exceed_cf_7',
-            title='Exceed CF 7',
-            link='https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
-            family='Exceed',
-            model='CF 7',
-        )
-    ]
+async def fixture_prefilled_catalog(
+        fixture_empty_catalog,
+        fixture_bike_item_1,
+        fixture_bike_item_2,
+) -> List[Bike]:
+    bikes_list = [fixture_bike_item_1, fixture_bike_item_2]
 
     await insert_actual_catalog(bikes_list)
     yield bikes_list
@@ -86,3 +114,5 @@ async def fixture_prefilled_subscription_for_match_list(fixture_prefilled_availa
         await create_subscription(fixture_fresh_chat_id, bike.family)
 
     yield
+
+

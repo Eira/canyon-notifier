@@ -2,7 +2,10 @@ from app.models import Bike, SubscriptionBikeFamily, Match
 from app.subscription_notifier import _get_notification_bikes
 
 
-def test_get_notification_bikes_happy_path():
+def test_get_notification_bikes_happy_path(
+        fixture_bike_item_1,
+        fixture_bike_item_2,
+):
     subscription_list = [
         SubscriptionBikeFamily(
             subscribe_id=12345678,
@@ -21,26 +24,15 @@ def test_get_notification_bikes_happy_path():
         ),
     ]
     available_bike_list = [
+        fixture_bike_item_1,
+        fixture_bike_item_2,
         Bike(
-            id='spectral_125_cf_9',
-            title='Spectral 125 CF 9',
-            link='https://www.canyon.com/en-cz/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR',
-            family='Spectral',
-            model='125 CF 9',
-        ),
-        Bike(
-            id='exceed_cf_7',
-            title='Exceed CF 7',
-            link='https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
-            family='Exceed',
-            model='CF 7',
-        ),
-        Bike(
-            id='Test_1_1',
+            id='Test_1_1 L',
             title='Test 1 1',
             link='https://test',
             family='Test',
             model='1 1',
+            size='L',
         ),
     ]
 
@@ -55,34 +47,26 @@ def test_get_notification_bikes_happy_path():
         for match in res
     ]
     assert match_id_list == [
-        ('spectral_125_cf_9', 12345678),
-        ('exceed_cf_7', 12345680),
+        ('spectral_125_cf_9_m', 12345678),
+        ('exceed_cf_7_l', 12345680),
     ]
 
 
-def test_get_notification_bikes_empty_subscription_list():
+def test_get_notification_bikes_empty_subscription_list(
+        fixture_bike_item_1,
+        fixture_bike_item_2,
+):
     subscription_list = []
     available_bike_list = [
+        fixture_bike_item_1,
+        fixture_bike_item_2,
         Bike(
-            id='spectral_125_cf_9',
-            title='Spectral 125 CF 9',
-            link='https://www.canyon.com/en-cz/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR',
-            family='Spectral',
-            model='125 CF 9',
-        ),
-        Bike(
-            id='exceed_cf_7',
-            title='Exceed CF 7',
-            link='https://www.canyon.com/en-cz/mountain-bikes/cross-country-bikes/exceed/cf/exceed-cf-7/3128.html?dwvar_3128_pv_rahmenfarbe=WH%2FMC',
-            family='Exceed',
-            model='CF 7',
-        ),
-        Bike(
-            id='Test_1_1',
+            id='Test_1_1_s',
             title='Test 1 1',
             link='https://test',
             family='Test',
             model='1 1',
+            size='S',
         ),
     ]
 

@@ -28,9 +28,15 @@ async def update_catalog(actual_catalog: List[Bike]) -> Tuple[int, int]:
     return items_deleted, items_added
 
 
-def _normalize_bike_id(bike_title: str) -> str:
-    """Bring the id to the same view: lowercase, underscore instead of whitespace. Return bike id normalized."""
-    return bike_title.replace(' ', '_').lower()
+def _create_bike_id(bike_title: str, bike_size: str) -> str:
+    """Bring the id to the same view: lowercase, underscore instead of whitespace + bike size. Return bike id."""
+    if not bike_title or not bike_size:
+        raise RuntimeError('No bike title or bike size.')
+
+    return '{title}_{size}'.format(
+        title=bike_title.replace(' ', '_').lower(),
+        size=bike_size.lower(),
+    )
 
 
 def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
@@ -42,6 +48,8 @@ def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
         'searchredirect': 'false',
         'pn': '1',
         'format': 'ajax',
+        'prefn1': 'pc_rahmengroesse',
+        'prefv1': '3XS|2XS|XS|S|M|L|XL|2XL',
     }
 
     catalog_response = httpx.get(
@@ -54,36 +62,52 @@ def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     return etree.HTML(html_source)
 
 
-def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437, WPS210
+def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437
     """Make the list of bike elements from HTML. Return list of bikes in elements."""
     output: List[Bike] = []
 
     html_bike_list = html_tree.cssselect('.productGrid__listItem')
     for list_item in html_bike_list:
-        try:
-            bike_name_element: etree.Element = list_item.cssselect('.productTileDefault__productName')[0]
-        except IndexError:
-            continue
+        bike_item_list = _parse_bike_list_item(list_item)
+        if bike_item_list:
+            output += bike_item_list
 
-        bike_title_list = bike_name_element.get('title').split(' ')
-        if bike_name_element.get('title').startswith('Grand Canyon'):
-            bike_family = f'{bike_title_list[0]} {bike_title_list[1]}'
-            bike_model = ' '.join(bike_title_list[2:])
-        else:
-            bike_family = bike_title_list[0]
-            bike_model = ' '.join(bike_title_list[1:])
+    return output
 
-        link: str = bike_name_element.get('href')
-        if not link.startswith('http'):
-            link = f'https://www.canyon.com{link}'
 
-        bike_item: Bike = Bike(
-            id=_normalize_bike_id(bike_name_element.get('title')),
+def _parse_bike_list_item(list_item: etree._Element) -> list[Bike]:  # noqa: WPS437, WPS210
+    """Make the list of bike elements for one bike model from HTML. Return list of bikes in elements."""
+    try:
+        bike_name_element: etree.Element = list_item.cssselect('.productTileDefault__productName')[0]
+    except IndexError:
+        return []
+
+    bike_title_list = bike_name_element.get('title').split(' ')
+    if bike_name_element.get('title').startswith('Grand Canyon'):
+        bike_family = f'{bike_title_list[0]} {bike_title_list[1]}'
+        bike_model = ' '.join(bike_title_list[2:])
+    else:
+        bike_family = bike_title_list[0]
+        bike_model = ' '.join(bike_title_list[1:])
+
+    link: str = bike_name_element.get('href')
+    if not link.startswith('http'):
+        link = f'https://www.canyon.com{link}'
+
+    sizes_element = list_item.cssselect('.productTileBadges__listItem')[0]
+    sizes = sizes_element.text.replace('Available to buy in ', '').strip().split('|')
+
+    if not sizes:
+        return []
+
+    return [
+        Bike(
+            id=_create_bike_id(bike_name_element.get('title'), size),
             title=bike_name_element.get('title'),
             link=link,
             family=bike_family,
             model=bike_model,
+            size=size,
         )
-        output.append(bike_item)
-
-    return output
+        for size in sizes
+    ]

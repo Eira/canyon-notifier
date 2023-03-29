@@ -45,7 +45,7 @@ async def show_catalog(message: types.Message) -> None:  # noqa: WPS210
 
     for catalog_family in catalog_family_group:
         bike_answer = [catalog_family.family] + [
-            hlink(bike.model, bike.link)
+            hlink(f'{bike.model} {bike.size}', bike.link)
             for bike in catalog_family.bike_list
         ]
 

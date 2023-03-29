@@ -13,6 +13,7 @@ class Bike:
     link: str
     family: str
     model: str
+    size: str
 
 
 @dataclass
