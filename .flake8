@@ -10,6 +10,8 @@ ignore =
     WPS306,  # Used dataclasses
     S410,    # Using etree to parse untrusted XML data is known to be vulnerable to XML attacks.
     WPS226,  # Found string literal over-use: title > 3
+    DAR401,  #Missing exception(s) in Raises section: -r RuntimeError
+
 
 per-file-ignores =
     #  WPS432:  Found magic number: 600.0
