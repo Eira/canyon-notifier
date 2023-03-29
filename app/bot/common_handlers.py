@@ -6,6 +6,7 @@ from typing import Generator, List
 from aiogram import types
 from aiogram.utils.markdown import hlink
 
+from app.bot.buttons import KATALOG_BUTTON, SUBSCRIBE_BUTTON, SUBSCRIBTIONS_BUTTON
 from app.models import Bike, CatalogFamily
 from app.storage.catalog import get_catalog
 
@@ -20,7 +21,7 @@ async def send_welcome(message: types.Message) -> None:
         '/subscriptions_list - check if you are waiting for any messages.',
     ))
 
-    await message.answer(answer_text)
+    await message.answer(answer_text, reply_markup=_get_keyboard())
 
 
 def chunks(chunkable_list: list, chunk_size: int) -> Generator:
@@ -54,3 +55,14 @@ async def show_catalog(message: types.Message) -> None:  # noqa: WPS210
             parse_mode='HTML',
             disable_web_page_preview=True,
         )
+
+def _get_keyboard() -> types.ReplyKeyboardMarkup:
+    """Return the keyboard markup."""
+    return types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+    ).row(
+        types.KeyboardButton(KATALOG_BUTTON),
+    ).row(
+        types.KeyboardButton(SUBSCRIBE_BUTTON),
+        types.KeyboardButton(SUBSCRIBTIONS_BUTTON),
+    )

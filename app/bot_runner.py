@@ -1,10 +1,10 @@
 """Bot runner."""
 import logging
 
-from aiogram import Bot, Dispatcher, executor
+from aiogram import Bot, Dispatcher, executor, filters
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from app.bot import common_handlers, subscription_handlers
+from app.bot import common_handlers, subscription_handlers, buttons
 from app.settings import app_settings
 
 bot = Bot(token=app_settings.bot_token)
@@ -16,14 +16,25 @@ def main() -> None:
 
     router = Dispatcher(bot, storage=storage)
     router.register_message_handler(common_handlers.send_welcome, commands=['start', 'help'])
-    router.register_message_handler(common_handlers.show_catalog, commands=['catalog'])
-    router.register_message_handler(subscription_handlers.start_subscription, commands=['subscribe'])
+    router.register_message_handler(
+        common_handlers.show_catalog,
+        filters.Text(equals=buttons.KATALOG_BUTTON, ignore_case=True),
+    )
+#    router.register_message_handler(common_handlers.show_catalog, commands=['catalog'])
+    router.register_message_handler(
+        subscription_handlers.start_subscription,
+        filters.Text(equals=buttons.SUBSCRIBE_BUTTON, ignore_case=True),
+    )
     router.register_message_handler(subscription_handlers.cancel_subscription, state='*', commands=['cancel'])
     router.register_message_handler(
         subscription_handlers.process_subscription,
         state=subscription_handlers.CreateSubscription.family_name,
     )
-    router.register_message_handler(subscription_handlers.show_subscriptions, commands=['subscriptions_list'])
+##   router.register_message_handler(subscription_handlers.show_subscriptions, commands=['subscriptions_list'])
+    router.register_message_handler(
+        subscription_handlers.show_subscriptions,
+        filters.Text(equals=buttons.SUBSCRIBTIONS_BUTTON, ignore_case=True),
+    )
     router.register_callback_query_handler(
         subscription_handlers.delete_subscription,
         lambda callback: callback.data and callback.data.startswith('delete_subscription:'),
