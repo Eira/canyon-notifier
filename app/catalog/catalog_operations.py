@@ -64,7 +64,7 @@ def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     return etree.HTML(html_source)
 
 
-def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437, WPS210
+def _parse_canyon_catalog(html_tree: etree._Element) -> List[Bike]:  # noqa: WPS437
     """Make the list of bike elements from HTML. Return list of bikes in elements."""
     output: List[Bike] = []
 
