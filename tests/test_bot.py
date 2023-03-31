@@ -24,8 +24,9 @@ async def test_bot_send_welcome_happy_path():
 
 async def test_show_catalog_smoke():
     message_mock = AsyncMock()
+    state_mock = AsyncMock()
 
-    await show_catalog(message_mock)
+    await show_catalog(message=message_mock, state=state_mock)
 
     assert True
 
@@ -110,10 +111,13 @@ async def test_show_subscriptions_happy_path(fixture_prefilled_subscription):
 
     await show_subscriptions(message=message_mock)
 
-    real_bike_family = message_mock.answer.await_args.kwargs['reply_markup'].inline_keyboard[0][0].text
+    real_bike_family = message_mock.answer.await_args_list[0].args[0]
+    reply_markup = message_mock.answer.await_args.kwargs['reply_markup']
 
-    assert message_mock.answer.call_count == 1
-    assert expected_bike_family == real_bike_family
+    assert message_mock.answer.call_count == 2
+    assert reply_markup.keyboard[0][0].text == 'subscribe'
+    assert reply_markup.keyboard[1][0].text == 'back'
+    assert real_bike_family == expected_bike_family
 
 
 async def test_show_subscriptions_empty():

@@ -7,6 +7,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
+from app.bot.buttons import BACK_FROM_SUBSCR_BUTTON, DELETE_BUTTON, SUBSCRIBE_BUTTON
 from app.settings import app_settings
 from app.storage import subscription as subscription_storage
 from app.storage.subscription import get_subscription_amount
@@ -61,24 +62,34 @@ async def show_subscriptions(message: types.Message) -> None:
     """Take all users subscription and show all subscriptions."""
     list_of_subscriptions = await subscription_storage.get_subscriptions(message.chat.id)
 
-    if list_of_subscriptions:
-        btn_list_subscriptions: list = []
+    keyboard = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+    ).row(
+        types.KeyboardButton(SUBSCRIBE_BUTTON),
+    ).row(
+        types.KeyboardButton(BACK_FROM_SUBSCR_BUTTON),
+    )
 
+    if list_of_subscriptions:
         for subscription_item in list_of_subscriptions:
-            btn_list_subscriptions.append(
+            inline_kb1 = types.InlineKeyboardMarkup().add(
                 types.InlineKeyboardButton(
-                    text=subscription_item.bike_family,
+                    text=DELETE_BUTTON,
                     callback_data=f'delete_subscription:{subscription_item.subscribe_id}',
                 ),
             )
-        inline_kb1 = types.InlineKeyboardMarkup().add(*btn_list_subscriptions)
-        await message.answer('Press the button to delete subscription:', reply_markup=inline_kb1)
+
+            await message.answer(
+                subscription_item.bike_family,
+                reply_markup=inline_kb1,
+            )
+
+        await message.answer('Do you want to subscribe?', reply_markup=keyboard)
     else:
-        answer_test = '\n'.join((
+        answer_text = '\n'.join((
             'You do not have any subscriptions yet.',
-            '/subscribe - to make one.',
         ))
-        await message.answer(answer_test)
+        await message.answer(answer_text, reply_markup=keyboard)
 
 
 async def delete_subscription(callback_query: types.CallbackQuery) -> None:
