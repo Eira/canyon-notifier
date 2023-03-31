@@ -4,7 +4,7 @@ import logging
 from aiogram import Bot, Dispatcher, executor, filters
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from app.bot import buttons, common_handlers, subscription_handlers
+from app.bot import buttons, catalog_handlers, common_handlers, subscription_handlers
 from app.settings import app_settings
 
 bot = Bot(token=app_settings.bot_token)
@@ -33,12 +33,12 @@ def _setup_main_routers(router) -> None:
 
 def _setup_catalog_routers(router) -> None:
     router.register_message_handler(
-        common_handlers.start_show_catalog,
-        filters.Text(equals=buttons.KATALOG_BUTTON, ignore_case=True),
+        catalog_handlers.start_show_catalog,
+        filters.Text(equals=buttons.CATALOG_BUTTON, ignore_case=True),
     )
     router.register_message_handler(
-        common_handlers.show_catalog,
-        state=common_handlers.SortCatalogBySize.size_for_sort,
+        catalog_handlers.show_catalog,
+        state=catalog_handlers.SortCatalogBySize.size_for_sort,
     )
 
 

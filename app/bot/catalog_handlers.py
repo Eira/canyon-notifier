@@ -30,6 +30,7 @@ async def start_show_catalog(message: types.Message) -> None:
 
 def chunks(chunkable_list: list, chunk_size: int) -> Generator:
     """Yield successive n-sized chunks from lst."""
+    # todo test
     yield from (
         chunkable_list[index:index + chunk_size]
         for index in range(0, len(chunkable_list), chunk_size)

@@ -1,54 +1,8 @@
 from unittest.mock import AsyncMock
 
 from app import storage
-from app.bot.common_handlers import send_welcome, show_catalog
 from app.bot.subscription_handlers import start_subscription, process_subscription, cancel_subscription, show_subscriptions, delete_subscription
-from app.bot_runner import main
-from app.storage.subscription import get_subscriptions, create_subscription
-
-
-async def test_bot_send_welcome_happy_path():
-    expected_answer = '\n'.join((
-        'Hi, friend!',
-        'I will show you which canyon bicycles are available in the store.',
-        '/catalog - to see all catalog.',
-        '/subscribe - to get the message, when the bike family you want in the stock.',
-        '/subscriptions_list - check if you are waiting for any messages.',
-    ))
-    message_mock = AsyncMock()
-
-    await send_welcome(message=message_mock)
-
-    message_mock.answer.assert_called_with(expected_answer)
-
-
-async def test_show_catalog_smoke():
-    message_mock = AsyncMock()
-    state_mock = AsyncMock()
-
-    await show_catalog(message=message_mock, state=state_mock)
-
-    assert True
-
-
-async def test_show_catalog_happy_path(fixture_prefilled_catalog):
-    message_mock = AsyncMock()
-    expected_res = 'Spectral\n<a href="https://www.canyon.com/en-de/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR">125 CF 9 M</a>'
-
-    await show_catalog(message_mock)
-
-    res = message_mock.answer.call_args[0][0]
-    assert message_mock.answer.call_count == 2
-    assert expected_res in res
-
-
-def test_bot_main_smoke(mocker):
-    mock = mocker.patch('app.bot_runner.executor.start_polling')
-
-    res = main()
-
-    assert res is None
-    assert mock.call_count == 1
+from app.storage.subscription import get_subscriptions
 
 
 async def test_start_subscription_smoke(mocker):

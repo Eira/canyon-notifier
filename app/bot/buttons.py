@@ -1,6 +1,6 @@
 """Bot buttons."""
 
-KATALOG_BUTTON = 'catalog'
+CATALOG_BUTTON = 'catalog'
 SUBSCRIBE_BUTTON = 'subscribe'
 SUBSCRIBTIONS_BUTTON = 'subscriptions'
 BACK_FROM_SUBSCR_BUTTON = 'back'

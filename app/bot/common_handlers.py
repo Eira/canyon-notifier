@@ -30,7 +30,7 @@ def get_main_keyboard() -> types.ReplyKeyboardMarkup:
     return types.ReplyKeyboardMarkup(
         resize_keyboard=True,
     ).row(
-        types.KeyboardButton(buttons.KATALOG_BUTTON),
+        types.KeyboardButton(buttons.CATALOG_BUTTON),
     ).row(
         types.KeyboardButton(buttons.SUBSCRIBTIONS_BUTTON),
     )
