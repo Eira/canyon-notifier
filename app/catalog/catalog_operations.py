@@ -95,9 +95,9 @@ def _parse_bike_list_item(list_item: etree._Element) -> list[Bike]:  # noqa: WPS
 
     try:
         sizes_element = list_item.cssselect('.productTileBadges__listItem')[0]
-        sizes = sizes_element.text.replace('Available to buy in ', '').strip().split('|')
-    except:
+    except IndexError:
         return []
+    sizes = sizes_element.text.replace('Available to buy in ', '').strip().split('|')
 
     return [
         Bike(

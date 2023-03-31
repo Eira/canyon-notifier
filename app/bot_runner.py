@@ -13,14 +13,25 @@ bot = Bot(token=app_settings.bot_token)
 def main() -> None:
     """Telegram bot app runner."""
     storage = MemoryStorage()
-
     router = Dispatcher(bot, storage=storage)
+
+    _setup_main_routers(router)
+    _setup_catalog_routers(router)
+    _setup_subscription_routers(router)
+
+    executor.start_polling(router, skip_updates=True)
+
+
+def _setup_main_routers(router) -> None:
     router.register_message_handler(common_handlers.send_welcome, commands=['start', 'help'])
     router.register_message_handler(
         common_handlers.cancel,
         filters.Text(equals=buttons.BACK_FROM_SUBSCR_BUTTON, ignore_case=True),
         state='*',
     )
+
+
+def _setup_catalog_routers(router) -> None:
     router.register_message_handler(
         common_handlers.start_show_catalog,
         filters.Text(equals=buttons.KATALOG_BUTTON, ignore_case=True),
@@ -29,6 +40,9 @@ def main() -> None:
         common_handlers.show_catalog,
         state=common_handlers.SortCatalogBySize.size_for_sort,
     )
+
+
+def _setup_subscription_routers(router) -> None:
     router.register_message_handler(subscription_handlers.cancel_subscription, state='*', commands=['cancel'])
     router.register_message_handler(
         subscription_handlers.process_subscription,
@@ -46,7 +60,6 @@ def main() -> None:
         subscription_handlers.delete_subscription,
         lambda callback: callback.data and callback.data.startswith('delete_subscription:'),
     )
-    executor.start_polling(router, skip_updates=True)
 
 
 if __name__ == '__main__':

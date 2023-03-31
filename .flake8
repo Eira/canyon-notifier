@@ -17,3 +17,6 @@ per-file-ignores =
     #  WPS432:  Found magic number: 600.0
     #  WPS425:  Found boolean non-keyword argument: False
     app/settings.py: WPS432, WPS425
+    #  WPS114 Found underscored number name pattern
+    app/bot/buttons.py: WPS114
+
