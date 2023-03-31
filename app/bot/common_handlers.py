@@ -100,6 +100,11 @@ async def show_catalog(message: types.Message, state: FSMContext) -> None:  # no
 
     await state.finish()
 
+async def cancel(message: types.Message, state: FSMContext) -> None:
+    """Cancel of current operation in bot. Return welcome message and keyboard."""
+    await state.finish()
+    await send_welcome(message)
+
 
 def _get_main_keyboard() -> types.ReplyKeyboardMarkup:
     """Return the keyboard markup."""

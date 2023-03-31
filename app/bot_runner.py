@@ -17,16 +17,17 @@ def main() -> None:
     router = Dispatcher(bot, storage=storage)
     router.register_message_handler(common_handlers.send_welcome, commands=['start', 'help'])
     router.register_message_handler(
+        common_handlers.cancel,
+        filters.Text(equals=buttons.BACK_FROM_SUBSCR_BUTTON, ignore_case=True),
+        state='*',
+    )
+    router.register_message_handler(
         common_handlers.start_show_catalog,
         filters.Text(equals=buttons.KATALOG_BUTTON, ignore_case=True),
     )
     router.register_message_handler(
         common_handlers.show_catalog,
         state=common_handlers.SortCatalogBySize.size_for_sort,
-    )
-    router.register_message_handler(
-        common_handlers.send_welcome,
-        filters.Text(equals=buttons.BACK_FROM_SUBSCR_BUTTON, ignore_case=True),
     )
     router.register_message_handler(subscription_handlers.cancel_subscription, state='*', commands=['cancel'])
     router.register_message_handler(
