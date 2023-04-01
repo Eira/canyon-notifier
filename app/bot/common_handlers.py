@@ -9,11 +9,7 @@ from app.bot import buttons
 async def send_welcome(message: types.Message) -> None:
     """Greeting user when user sends `/start` or `/help` command."""
     answer_text = '\n'.join((
-        'Hi, friend!',
         'I will show you which canyon bicycles are available in the store.',
-        '/catalog - to see all catalog.',
-        '/subscribe - to get the message, when the bike family you want in the stock.',
-        '/subscriptions_list - check if you are waiting for any messages.',
     ))
 
     await message.answer(answer_text, reply_markup=get_main_keyboard())

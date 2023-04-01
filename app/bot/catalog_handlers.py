@@ -56,7 +56,7 @@ async def show_catalog(message: types.Message, state: FSMContext) -> None:  # no
         catalog: list[Bike] = await get_catalog()
 
         if user_size != buttons.SIZE_ALL_BUTTON:
-            catalog: list[Bike] = [bike for bike in catalog if bike.size == user_size]
+            catalog = [bike for bike in catalog if bike.size == user_size]
 
         if not catalog:
             await message.answer(

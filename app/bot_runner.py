@@ -22,7 +22,8 @@ def main() -> None:
     executor.start_polling(router, skip_updates=True)
 
 
-def _setup_main_routers(router) -> None:
+def _setup_main_routers(router: Dispatcher) -> None:
+    """Contain main routers."""
     router.register_message_handler(common_handlers.send_welcome, commands=['start', 'help'])
     router.register_message_handler(
         common_handlers.cancel,
@@ -31,7 +32,8 @@ def _setup_main_routers(router) -> None:
     )
 
 
-def _setup_catalog_routers(router) -> None:
+def _setup_catalog_routers(router: Dispatcher) -> None:
+    """Contain catalog routers."""
     router.register_message_handler(
         catalog_handlers.start_show_catalog,
         filters.Text(equals=buttons.CATALOG_BUTTON, ignore_case=True),
@@ -42,8 +44,13 @@ def _setup_catalog_routers(router) -> None:
     )
 
 
-def _setup_subscription_routers(router) -> None:
-    router.register_message_handler(subscription_handlers.cancel_subscription, state='*', commands=['cancel'])
+def _setup_subscription_routers(router: Dispatcher) -> None:
+    """Contain subscription routers."""
+    router.register_message_handler(
+        subscription_handlers.cancel_subscription,
+        filters.Text(equals=buttons.CANCEL_SUBSCR_BUTTON, ignore_case=True),
+        state='*',
+    )
     router.register_message_handler(
         subscription_handlers.process_subscription,
         state=subscription_handlers.CreateSubscription.family_name,
