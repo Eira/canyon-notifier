@@ -13,9 +13,9 @@ async def test_show_catalog_smoke():
 
 
 async def test_show_catalog_happy_path(fixture_prefilled_catalog):
-    # todo переписать, сейча тут старая рыба
     message_mock = AsyncMock()
     state_mock = AsyncMock()
+    message_mock.text = 'M'
     expected_res = 'Spectral\n<a href="https://www.canyon.com/en-de/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR">125 CF 9 M</a>'
 
     await show_catalog(message=message_mock, state=state_mock)

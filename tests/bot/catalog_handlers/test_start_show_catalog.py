@@ -11,5 +11,5 @@ async def test_start_show_catalog_smoke(mocker):
 
     await start_show_catalog(message=message_mock)
 
+    message_mock.answer.await_args.assert_called_with(expected_reply)
     assert mock.call_count == 1
-    # todo проверить текст
