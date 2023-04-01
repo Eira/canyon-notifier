@@ -28,15 +28,6 @@ async def start_show_catalog(message: types.Message) -> None:
     await message.answer(answer_text, reply_markup=get_sizes_keyboard())
 
 
-def chunks(chunkable_list: list, chunk_size: int) -> Generator:
-    """Yield successive n-sized chunks from lst."""
-    # todo test
-    yield from (
-        chunkable_list[index:index + chunk_size]
-        for index in range(0, len(chunkable_list), chunk_size)
-    )
-
-
 async def show_catalog(message: types.Message, state: FSMContext) -> None:  # noqa: WPS210
     """Return the list of all available bicycles."""
     sizes_list = {
@@ -52,39 +43,48 @@ async def show_catalog(message: types.Message, state: FSMContext) -> None:  # no
     }
     user_size = message.text
 
-    if user_size in sizes_list:
-        catalog: list[Bike] = await get_catalog()
-
-        if user_size != buttons.SIZE_ALL_BUTTON:
-            catalog = [bike for bike in catalog if bike.size == user_size]
-
-        if not catalog:
-            await message.answer(
-                f'Sorry, there no {user_size} bikes available at the moment.',
-                reply_markup=get_main_keyboard(),
-            )
-
-        catalog_family_group: list[CatalogFamily] = [
-            CatalogFamily(
-                family=key,
-                bike_list=list(group),
-            )
-            for key, group in groupby(catalog, lambda bike: bike.family)
-        ]
-
-        for catalog_family in catalog_family_group:
-            bike_answer = [catalog_family.family] + [
-                hlink(f'{bike.model} {bike.size}', bike.link)
-                for bike in catalog_family.bike_list
-            ]
-
-            await message.answer(
-                '\n'.join(bike_answer),
-                parse_mode='HTML',
-                disable_web_page_preview=True,
-                reply_markup=get_main_keyboard(),
-            )
-    else:
+    if user_size not in sizes_list:
         await message.answer('There no such size in Canyon size grid.', reply_markup=get_main_keyboard())
 
+    catalog: list[Bike] = await get_catalog()
+
+    if user_size != buttons.SIZE_ALL_BUTTON:
+        catalog = [bike for bike in catalog if bike.size == user_size]
+
+    if not catalog:
+        await message.answer(
+            f'Sorry, there no {user_size} bikes available at the moment.',
+            reply_markup=get_main_keyboard(),
+        )
+
+    catalog_family_group: list[CatalogFamily] = [
+        CatalogFamily(
+            family=key,
+            bike_list=list(group),
+        )
+        for key, group in groupby(catalog, lambda bike: bike.family)
+    ]
+
+    for catalog_family in catalog_family_group:
+        bike_answer = [catalog_family.family] + [
+            hlink(f'{bike.model} {bike.size}', bike.link)
+            for bike in catalog_family.bike_list
+        ]
+
+        await message.answer(
+            '\n'.join(bike_answer),
+            parse_mode='HTML',
+            disable_web_page_preview=True,
+            reply_markup=get_main_keyboard(),
+        )
+
     await state.finish()
+
+
+def _chunks(chunkable_list: list, chunk_size: int) -> Generator:
+    """Yield successive n-sized chunks from lst."""
+    # todo test
+    yield from (
+        chunkable_list[index:index + chunk_size]
+        for index in range(0, len(chunkable_list), chunk_size)
+    )

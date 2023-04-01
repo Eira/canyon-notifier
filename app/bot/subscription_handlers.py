@@ -104,7 +104,7 @@ async def delete_subscription(callback_query: types.CallbackQuery) -> None:
 
 
 def _get_subscription_keyboard() -> types.ReplyKeyboardMarkup:
-    """Return the main keyboard markup."""
+    """Return the subscription keyboard markup."""
     return types.ReplyKeyboardMarkup(
         resize_keyboard=True,
     ).row(
