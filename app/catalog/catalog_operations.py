@@ -43,15 +43,14 @@ def _get_canyon_catalog_html() -> etree._Element:  # noqa: WPS437
     """Get HTML from the canyon catalog web page. Return HTML."""
     query_params = {
         'srule': 'sort_master_availability',
+        'searchredirect': 'false',
         'start': '0',
         'sz': '300',
-        'searchredirect': 'false',
         'pn': '1',
         'format': 'ajax',
         'prefn1': 'pc_rahmengroesse',
         'prefv1': '3XS|2XS|XS|S|M|L|XL|2XL',
     }
-
     catalog_response = httpx.get(
         'https://www.canyon.com/en-de/buying-tools/in-stock-bikes/',
         timeout=app_settings.timeout,
@@ -94,11 +93,11 @@ def _parse_bike_list_item(list_item: etree._Element) -> list[Bike]:  # noqa: WPS
     if not link.startswith('http'):
         link = f'https://www.canyon.com{link}'
 
-    sizes_element = list_item.cssselect('.productTileBadges__listItem')[0]
-    sizes = sizes_element.text.replace('Available to buy in ', '').strip().split('|')
-
-    if not sizes:
+    try:
+        sizes_element = list_item.cssselect('.productTileBadges__listItem')[0]
+    except IndexError:
         return []
+    sizes = sizes_element.text.replace('Available to buy in ', '').strip().split('|')
 
     return [
         Bike(

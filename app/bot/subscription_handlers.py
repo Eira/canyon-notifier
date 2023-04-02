@@ -7,6 +7,8 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
+from app.bot import buttons
+from app.bot.common_handlers import get_main_keyboard
 from app.settings import app_settings
 from app.storage import subscription as subscription_storage
 from app.storage.subscription import get_subscription_amount
@@ -30,10 +32,9 @@ async def start_subscription(message: types.Message) -> None:
     else:
         reply_text = '\n'.join((
             'Please, write the bike family name.When it will be available we will let you know!',
-            '/cancel - to cancel the action.',
         ))
         await CreateSubscription.family_name.set()
-    await message.reply(reply_text)
+    await message.reply(reply_text, reply_markup=_get_subscription_keyboard())
 
 
 async def cancel_subscription(message: types.Message, state: FSMContext) -> None:
@@ -43,7 +44,7 @@ async def cancel_subscription(message: types.Message, state: FSMContext) -> None
         return
 
     await state.finish()
-    await message.reply('Cancelled.')
+    await message.reply('Cancelled.', reply_markup=get_main_keyboard())
 
 
 async def process_subscription(message: types.Message, state: FSMContext) -> None:
@@ -54,31 +55,44 @@ async def process_subscription(message: types.Message, state: FSMContext) -> Non
     )
 
     await state.finish()
-    await message.reply(f'Got it! When "{created_subscription.bike_family}" will be available we will let you know!')
+    await message.reply(
+        f'Got it! When "{created_subscription.bike_family}" will be available we will let you know!',
+        reply_markup=get_main_keyboard(),
+    )
 
 
 async def show_subscriptions(message: types.Message) -> None:
     """Take all users subscription and show all subscriptions."""
     list_of_subscriptions = await subscription_storage.get_subscriptions(message.chat.id)
 
-    if list_of_subscriptions:
-        btn_list_subscriptions: list = []
+    keyboard = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+    ).row(
+        types.KeyboardButton(buttons.SUBSCRIBE_BUTTON),
+    ).row(
+        types.KeyboardButton(buttons.BACK_FROM_SUBSCR_BUTTON),
+    )
 
+    if list_of_subscriptions:
         for subscription_item in list_of_subscriptions:
-            btn_list_subscriptions.append(
+            inline_kb1 = types.InlineKeyboardMarkup().add(
                 types.InlineKeyboardButton(
-                    text=subscription_item.bike_family,
+                    text=buttons.DELETE_BUTTON,
                     callback_data=f'delete_subscription:{subscription_item.subscribe_id}',
                 ),
             )
-        inline_kb1 = types.InlineKeyboardMarkup().add(*btn_list_subscriptions)
-        await message.answer('Press the button to delete subscription:', reply_markup=inline_kb1)
+
+            await message.answer(
+                subscription_item.bike_family,
+                reply_markup=inline_kb1,
+            )
+
+        await message.answer('That is all subscriptions you have.', reply_markup=keyboard)
     else:
-        answer_test = '\n'.join((
+        answer_text = '\n'.join((
             'You do not have any subscriptions yet.',
-            '/subscribe - to make one.',
         ))
-        await message.answer(answer_test)
+        await message.answer(answer_text, reply_markup=keyboard)
 
 
 async def delete_subscription(callback_query: types.CallbackQuery) -> None:
@@ -87,3 +101,12 @@ async def delete_subscription(callback_query: types.CallbackQuery) -> None:
     await subscription_storage.delete_subscription(subscription_id)
     await callback_query.answer('the subscription was deleted.')
     await show_subscriptions(callback_query.message)
+
+
+def _get_subscription_keyboard() -> types.ReplyKeyboardMarkup:
+    """Return the subscription keyboard markup."""
+    return types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+    ).row(
+        types.KeyboardButton(buttons.CANCEL_SUBSCR_BUTTON),
+    )
