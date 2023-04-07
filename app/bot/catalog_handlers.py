@@ -30,6 +30,8 @@ async def start_show_catalog(message: types.Message) -> None:
 
 async def show_catalog(message: types.Message, state: FSMContext) -> None:  # noqa: WPS210
     """Return the list of all available bicycles."""
+    await state.finish()
+
     sizes_list = {
         buttons.SIZE_ALL_BUTTON,
         buttons.SIZE_3XS_BUTTON,
@@ -45,33 +47,35 @@ async def show_catalog(message: types.Message, state: FSMContext) -> None:  # no
 
     if user_size not in sizes_list:
         await message.answer('There no such size in Canyon size grid.', reply_markup=get_main_keyboard())
+        return
+
+    custom_size_on: bool = user_size != buttons.SIZE_ALL_BUTTON
 
     catalog: list[Bike] = await get_catalog()
-
-    if user_size != buttons.SIZE_ALL_BUTTON:
+    if custom_size_on:
         catalog = [bike for bike in catalog if bike.size == user_size]
 
-        if not catalog:
-            await message.answer(
-                f'Sorry, there no {user_size} bikes available at the moment.',
-                reply_markup=get_main_keyboard(),
-            )
+    if not catalog:
+        no_bike_text = 'Sorry, there no any bikes available at the moment.'
+        no_bike_size_text = f'Sorry, there no {user_size} bikes available at the moment.'
+        await message.answer(
+            no_bike_size_text if custom_size_on else no_bike_text,
+            reply_markup=get_main_keyboard(),
+        )
+        return
 
     catalog_family_group: list[CatalogFamily] = [
         CatalogFamily(
-            family=key,
-            bike_list=list(group),
+            family=family,
+            bike_list=list(bikes),
         )
-        for key, group in groupby(catalog, lambda bike: bike.family)
+        for family, bikes in groupby(catalog, lambda bike: bike.family)
     ]
 
-    if user_size == buttons.SIZE_ALL_BUTTON:
-        await _get_all_sizes_catalog(catalog_family_group, message)
-
-    if user_size != buttons.SIZE_ALL_BUTTON:
+    if custom_size_on:
         await _get_one_size_catalog(catalog_family_group, message)
-
-    await state.finish()
+    else:
+        await _get_all_sizes_catalog(catalog_family_group, message)
 
 
 async def _get_all_sizes_catalog(catalog_family_group: list[CatalogFamily], message: types.Message) -> None:
@@ -90,7 +94,7 @@ async def _get_all_sizes_catalog(catalog_family_group: list[CatalogFamily], mess
                     link = bike.link
 
 
-            bikes_list.append(hlink(f'{model}', link) + f"  {' '.join(sizes_list)}")
+            bikes_list.append(hlink(f'{model}', link) + f"  {', '.join(sizes_list)}")
 
         bike_answer = [catalog_family.family] + bikes_list
 
