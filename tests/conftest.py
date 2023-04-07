@@ -21,6 +21,17 @@ def fixture_bike_item_1():
         )
     yield bike_item_1
 
+@pytest.fixture()
+def fixture_bike_item_1_s():
+    bike_item_1 = Bike(
+            id='spectral_125_cf_9_m',
+            title='Spectral 125 CF 9',
+            link='https://www.canyon.com/en-de/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR',
+            family='Spectral',
+            model='125 CF 9',
+            size='S',
+        )
+    yield bike_item_1
 
 @pytest.fixture()
 def fixture_bike_item_2():
@@ -61,6 +72,19 @@ async def fixture_prefilled_catalog(
         fixture_bike_item_2,
 ) -> List[Bike]:
     bikes_list = [fixture_bike_item_1, fixture_bike_item_2]
+
+    await insert_actual_catalog(bikes_list)
+    yield bikes_list
+    await clear_catalog()
+
+
+@pytest.fixture()
+async def fixture_prefilled_catalog_few_sizes(
+        fixture_empty_catalog,
+        fixture_bike_item_1,
+        fixture_bike_item_1_s,
+) -> List[Bike]:
+    bikes_list = [fixture_bike_item_1, fixture_bike_item_1_s]
 
     await insert_actual_catalog(bikes_list)
     yield bikes_list

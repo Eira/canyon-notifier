@@ -51,11 +51,11 @@ async def show_catalog(message: types.Message, state: FSMContext) -> None:  # no
     if user_size != buttons.SIZE_ALL_BUTTON:
         catalog = [bike for bike in catalog if bike.size == user_size]
 
-    if not catalog:
-        await message.answer(
-            f'Sorry, there no {user_size} bikes available at the moment.',
-            reply_markup=get_main_keyboard(),
-        )
+        if not catalog:
+            await message.answer(
+                f'Sorry, there no {user_size} bikes available at the moment.',
+                reply_markup=get_main_keyboard(),
+            )
 
     catalog_family_group: list[CatalogFamily] = [
         CatalogFamily(
@@ -65,9 +65,47 @@ async def show_catalog(message: types.Message, state: FSMContext) -> None:  # no
         for key, group in groupby(catalog, lambda bike: bike.family)
     ]
 
+    if user_size == buttons.SIZE_ALL_BUTTON:
+        await _get_all_sizes_catalog(catalog_family_group, message)
+
+    if user_size != buttons.SIZE_ALL_BUTTON:
+        await _get_one_size_catalog(catalog_family_group, message)
+
+    await state.finish()
+
+
+async def _get_all_sizes_catalog(catalog_family_group: list[CatalogFamily], message: types.Message) -> None:
+    """ Send messages with all bikes in the catalog."""
+    for catalog_family in catalog_family_group:
+
+        models_set = set([bike.model for bike in catalog_family.bike_list])
+
+        bikes_list = []
+        for model in models_set:
+            sizes_list = []
+            link = ''
+            for bike in catalog_family.bike_list:
+                if model == bike.model:
+                    sizes_list.append(bike.size.strip())
+                    link = bike.link
+
+
+            bikes_list.append(hlink(f'{model}', link) + f"  {' '.join(sizes_list)}")
+
+        bike_answer = [catalog_family.family] + bikes_list
+
+        await message.answer(
+            '\n'.join(bike_answer),
+            parse_mode='HTML',
+            disable_web_page_preview=True,
+            reply_markup=get_main_keyboard(),
+        )
+
+
+async def _get_one_size_catalog(catalog_family_group: list[CatalogFamily], message: types.Message) -> None:
     for catalog_family in catalog_family_group:
         bike_answer = [catalog_family.family] + [
-            hlink(f'{bike.model} {bike.size}', bike.link)
+            hlink(f'{bike.model}', bike.link)
             for bike in catalog_family.bike_list
         ]
 
@@ -77,8 +115,6 @@ async def show_catalog(message: types.Message, state: FSMContext) -> None:  # no
             disable_web_page_preview=True,
             reply_markup=get_main_keyboard(),
         )
-
-    await state.finish()
 
 
 def _chunks(chunkable_list: list, chunk_size: int) -> Generator:
