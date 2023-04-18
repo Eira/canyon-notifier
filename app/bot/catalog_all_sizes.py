@@ -24,7 +24,6 @@ async def send_all_sizes_catalog(catalog_family_group: list[CatalogFamily], mess
 
 def _get_all_sizes_bike_list(catalog_family: CatalogFamily) -> list[str]:
     """Return list of unique models of bikes with links and sizes."""
-    # todo test
     catalog_positions = []
     for model, bikes in groupby(catalog_family.bike_list, lambda bike: bike.model):
         bikes_list = list(bikes)

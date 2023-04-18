@@ -31,4 +31,5 @@ async def test_get_all_sizes_catalog(fixture_prefilled_catalog_few_sizes):
         )
     ]
     await send_all_sizes_catalog(catalog_family_group, message=message_mock)
-    # todo write assert
+
+    assert message_mock.answer.call_count == 1

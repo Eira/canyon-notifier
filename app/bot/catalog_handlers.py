@@ -60,7 +60,6 @@ async def _output_catalog(
     user_size: str,
 ) -> None:
     """Send messages with customised catalog."""
-    # todo test
     if not catalog:
         no_bike_text = 'Sorry, there no any bikes available at the moment.'
         no_bike_size_text = f'Sorry, there no {user_size} bikes available at the moment.'
@@ -86,7 +85,7 @@ async def _output_catalog(
 
 def _chunks(chunkable_list: list, chunk_size: int) -> Generator:
     """Yield successive n-sized chunks from lst."""
-    # todo test
+    # todo test и вообще где это используется?
     yield from (
         chunkable_list[index:index + chunk_size]
         for index in range(0, len(chunkable_list), chunk_size)
