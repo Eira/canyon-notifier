@@ -1,6 +1,6 @@
 from unittest.mock import AsyncMock
 
-from app.bot.catalog_handlers import send_all_sizes_catalog
+from app.bot.catalog.catalog_helpers import show_all_sizes_catalog
 from app.models import CatalogFamily, Bike
 
 
@@ -30,6 +30,6 @@ async def test_get_all_sizes_catalog(fixture_prefilled_catalog_few_sizes):
             ]
         )
     ]
-    await send_all_sizes_catalog(catalog_family_group, message=message_mock)
+    await show_all_sizes_catalog(catalog_family_group, message=message_mock)
 
     assert message_mock.answer.call_count == 1

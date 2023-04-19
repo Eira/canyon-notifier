@@ -1,4 +1,4 @@
-from app.bot.catalog_all_sizes import _get_all_sizes_bike_list
+from app.bot.catalog.catalog_helpers import _get_all_sizes_bike_list
 from app.models import CatalogFamily, Bike
 
 

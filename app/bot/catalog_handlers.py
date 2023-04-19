@@ -1,15 +1,13 @@
 """This is the module of bot catalog handlers."""
 
 from itertools import groupby
-from typing import Generator
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from app.bot import buttons
-from app.bot.catalog_all_sizes import send_all_sizes_catalog
-from app.bot.catalog_one_size import send_one_size_catalog
+from app.bot.catalog.catalog_helpers import show_all_sizes_catalog, show_one_size_catalog
 from app.bot.common_handlers import get_main_keyboard, get_sizes_keyboard
 from app.models import Bike, CatalogFamily
 from app.storage.catalog import get_catalog
@@ -78,15 +76,6 @@ async def _output_catalog(
     ]
 
     if custom_size_on:
-        await send_one_size_catalog(catalog_family_group, message)
+        await show_one_size_catalog(catalog_family_group, message)
     else:
-        await send_all_sizes_catalog(catalog_family_group, message)
-
-
-def _chunks(chunkable_list: list, chunk_size: int) -> Generator:
-    """Yield successive n-sized chunks from lst."""
-    # todo test и вообще где это используется?
-    yield from (
-        chunkable_list[index:index + chunk_size]
-        for index in range(0, len(chunkable_list), chunk_size)
-    )
+        await show_all_sizes_catalog(catalog_family_group, message)
