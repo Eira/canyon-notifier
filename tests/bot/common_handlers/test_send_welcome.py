@@ -12,4 +12,4 @@ async def test_bot_send_welcome_happy_path():
     await send_welcome(message=message_mock)
 
     assert message_mock.answer.await_args[0][0] == expected_answer
-    # todo проверить клавиатуру
+    # todo проверить клавиатуру как лучше?
