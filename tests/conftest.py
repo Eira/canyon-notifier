@@ -112,8 +112,9 @@ async def fixture_fresh_chat_id() -> int:
 @pytest.fixture()
 async def fixture_prefilled_subscription(fixture_fresh_chat_id) -> SubscriptionBikeFamily:
     bike_family = 'test_bike_family'
+    bike_size = 'M'
 
-    subscription_item = await create_subscription(fixture_fresh_chat_id, bike_family)
+    subscription_item = await create_subscription(fixture_fresh_chat_id, bike_family, bike_size)
     yield subscription_item
 
 

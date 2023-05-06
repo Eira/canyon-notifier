@@ -52,8 +52,12 @@ def _setup_subscription_routers(router: Dispatcher) -> None:
         state='*',
     )
     router.register_message_handler(
-        subscription_handlers.process_subscription,
+        subscription_handlers.process_family_name,
         state=subscription_handlers.CreateSubscription.family_name,
+    )
+    router.register_message_handler(
+        subscription_handlers.process_size_subscription,
+        state=subscription_handlers.CreateSubscription.model_size,
     )
     router.register_message_handler(
         subscription_handlers.show_subscriptions,
