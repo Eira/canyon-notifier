@@ -10,6 +10,7 @@ from typing import List
 
 from aiogram.utils.exceptions import BadRequest
 
+from app.bot import buttons
 from app.bot_runner import bot
 from app.models import Bike, Match, SubscriptionBikeFamily
 from app.settings import app_settings
@@ -62,8 +63,12 @@ def _get_notification_bikes(
         for bike in available_bike_list:
             bike_title = bike.title.lower()
 
-            if subscriptions_search_phrase in bike_title:
-                list_of_matches.append(Match(bike, subscription))
+            if subscription.bike_size == buttons.SIZE_ALL_BUTTON:
+                if subscriptions_search_phrase in bike_title:
+                    list_of_matches.append(Match(bike, subscription))
+            else:
+                if subscriptions_search_phrase in bike_title and subscription.bike_size == bike.size:
+                    list_of_matches.append(Match(bike, subscription))
 
     return list_of_matches
 

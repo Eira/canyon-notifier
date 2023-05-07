@@ -136,7 +136,7 @@ async def fixture_prefilled_available_bike_list(fixture_empty_available_bike_lis
 @pytest.fixture()
 async def fixture_prefilled_subscription_for_match_list(fixture_prefilled_available_bike_list, fixture_fresh_chat_id):
     for bike in fixture_prefilled_available_bike_list:
-        await create_subscription(fixture_fresh_chat_id, bike.family)
+        await create_subscription(fixture_fresh_chat_id, bike.family, bike.size)
 
     yield
 

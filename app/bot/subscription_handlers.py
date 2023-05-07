@@ -80,10 +80,6 @@ async def process_size_subscription(message: types.Message, state: FSMContext) -
 
         return
 
-    if bike_size == buttons.SIZE_ALL_BUTTON:
-        # todo
-        ...
-
     created_subscription = await subscription_storage.create_subscription(
         message.chat.id,
         (await state.get_data())['family_name'],

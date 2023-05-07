@@ -94,19 +94,19 @@ def _parse_bike_list_item(list_item: etree._Element) -> list[Bike]:  # noqa: WPS
         link = f'https://www.canyon.com{link}'
 
     try:
-        sizes_element = list_item.cssselect('.productTileBadges__listItem')[0]
+        sizes_element = list_item.cssselect('.productBadges__listItem')[0]
     except IndexError:
         return []
     sizes = sizes_element.text.replace('Available to buy in ', '').strip().split('|')
 
     return [
         Bike(
-            id=_create_bike_id(bike_name_element.get('title'), size),
+            id=_create_bike_id(bike_name_element.get('title'), size.strip()),
             title=bike_name_element.get('title'),
             link=link,
             family=bike_family,
             model=bike_model,
-            size=size,
+            size=size.strip(),
         )
         for size in sizes
     ]

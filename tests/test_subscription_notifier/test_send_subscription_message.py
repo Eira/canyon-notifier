@@ -16,6 +16,7 @@ async def test_send_subscription_message_smoke(
             subscribe_id=12345678,
             chat_id=915745042,
             bike_family='Spectral',
+            bike_size='M',
         ),
     )
     # todo стоит ли тут вставить переменые из фикстуры?
@@ -38,6 +39,7 @@ async def test_send_subscription_message_invalid_data(fixture_bike_item_1):
             subscribe_id=12345678,
             chat_id=-1,
             bike_family='Spectral',
+            bike_size='M',
         ),
     )
 
