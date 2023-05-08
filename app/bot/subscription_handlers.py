@@ -44,7 +44,7 @@ async def start_subscription(message: types.Message) -> None:
 
     await message.reply(
         reply_text,
-        reply_markup=markup,  # todo перенести в ифы
+        reply_markup=markup,
     )
 
 
@@ -60,7 +60,7 @@ async def cancel_subscription(message: types.Message, state: FSMContext) -> None
 
 async def process_family_name(message: types.Message, state: FSMContext) -> None:
     """Save family name to db and ask about the size."""
-    await state.update_data(family_name=message.text)
+    await state.update_data(family_name=message.text.strip()[:app_settings.max_subscription_name_length])
     answer_text = 'Please, choose the size of the bike.'
 
     await CreateSubscription.next()
@@ -70,7 +70,6 @@ async def process_family_name(message: types.Message, state: FSMContext) -> None
 
 async def process_size_subscription(message: types.Message, state: FSMContext) -> None:
     """Create the subscription."""
-    # todo test "all" size
     bike_size = message.text
     if bike_size not in buttons.available_sizes_list:
         await message.reply(

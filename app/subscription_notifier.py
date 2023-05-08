@@ -58,19 +58,24 @@ def _get_notification_bikes(
     list_of_matches: List[Match] = []
 
     for subscription in subscription_list:
-        subscriptions_search_phrase = subscription.bike_family.lower()
 
         for bike in available_bike_list:
-            bike_title = bike.title.lower()
 
-            if subscription.bike_size == buttons.SIZE_ALL_BUTTON:
-                if subscriptions_search_phrase in bike_title:
-                    list_of_matches.append(Match(bike, subscription))
-            else:
-                if subscriptions_search_phrase in bike_title and subscription.bike_size == bike.size:
-                    list_of_matches.append(Match(bike, subscription))
+            if _is_match(bike, subscription):
+                list_of_matches.append(Match(bike, subscription))
 
     return list_of_matches
+
+
+def _is_match(bike: Bike, subscription: SubscriptionBikeFamily) -> bool:
+    """Compare bikes in catalog and in subscriptions."""
+    subscriptions_search_phrase = subscription.bike_family.lower()
+    bike_title = bike.title.lower()
+
+    if subscription.bike_size == buttons.SIZE_ALL_BUTTON:
+        return subscriptions_search_phrase in bike_title
+
+    return subscriptions_search_phrase in bike_title and subscription.bike_size == bike.size
 
 
 async def _send_subscription_message(subscription_to_send: Match) -> bool:

@@ -19,7 +19,6 @@ async def test_send_subscription_message_smoke(
             bike_size='M',
         ),
     )
-    # todo стоит ли тут вставить переменые из фикстуры?
     expected_message = '\n'.join((
         'Spectral 125 CF 9 is available in the stock!',
         'https://www.canyon.com/en-de/mountain-bikes/trail-bikes/spectral-125/cf/spectral-125-cf-9/3179.html?dwvar_3179_pv_rahmenfarbe=SR',
