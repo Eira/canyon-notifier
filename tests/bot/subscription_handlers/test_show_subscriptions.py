@@ -6,7 +6,7 @@ from app.bot.subscription_handlers import show_subscriptions
 async def test_show_subscriptions_happy_path(fixture_prefilled_subscription):
     message_mock = AsyncMock()
     message_mock.chat.id = fixture_prefilled_subscription.chat_id
-    expected_bike_family = fixture_prefilled_subscription.bike_family
+    expected_bike_family =f'{fixture_prefilled_subscription.bike_family} {fixture_prefilled_subscription.bike_size}'
 
     await show_subscriptions(message=message_mock)
 

@@ -3,6 +3,7 @@
 from dataclasses import asdict
 from typing import List, Optional
 
+from app.bot import buttons
 from app.models import SubscriptionBikeFamily
 from app.storage.conection import db_pool
 
@@ -40,14 +41,25 @@ async def get_subscriptions(chat_id: Optional[int] = None) -> List[SubscriptionB
 
     for subscribe_id in subscribe_id_list:
         subscription = await db_pool.hgetall(SUBSCRIPTION_BY_ID_KEY.format(subscribe_id))
-        subscriptions_list.append(
-            SubscriptionBikeFamily(
-                subscribe_id=int(subscription['subscribe_id']),
-                chat_id=int(subscription['chat_id']),
-                bike_family=subscription['bike_family'],
-                bike_size=subscription['bike_size'],
-            ),
-        )
+
+        if subscription['bike_size']:
+            subscriptions_list.append(
+                SubscriptionBikeFamily(
+                    subscribe_id=int(subscription['subscribe_id']),
+                    chat_id=int(subscription['chat_id']),
+                    bike_family=subscription['bike_family'],
+                    bike_size=subscription['bike_size'],
+                ),
+            )
+        else:
+            subscriptions_list.append(
+                SubscriptionBikeFamily(
+                    subscribe_id=int(subscription['subscribe_id']),
+                    chat_id=int(subscription['chat_id']),
+                    bike_family=subscription['bike_family'],
+                    bike_size=buttons.SIZE_ALL_BUTTON,
+                ),
+            )
 
     return subscriptions_list
 

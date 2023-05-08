@@ -115,7 +115,7 @@ async def show_subscriptions(message: types.Message) -> None:
             )
 
             await message.answer(
-                subscription_item.bike_family,
+                f'{subscription_item.bike_family} {subscription_item.bike_size}',
                 reply_markup=inline_kb1,
             )
 
