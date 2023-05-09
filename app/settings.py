@@ -15,6 +15,7 @@ class AppSettings(BaseSettings):
     bot_token: str
     telegram_max_entities: int = Field(50, description='количество ссылок в  одном сообщении телеграм бота.')
     max_amount_subscriptions: int = Field(10, description='максимальное количестов подписок пользователя')
+    max_subscription_name_length: int = Field(50, description='максимальная длинна названия байка для подписки.')
 
 
 app_settings = AppSettings(

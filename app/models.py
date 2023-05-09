@@ -31,6 +31,7 @@ class SubscriptionBikeFamily:
     subscribe_id: int
     chat_id: int
     bike_family: str
+    bike_size: str
 
 
 @dataclass
