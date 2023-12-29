@@ -20,8 +20,6 @@ async def test_show_catalog_happy_path(fixture_prefilled_catalog):
 
     await show_catalog(message=message_mock, state=state_mock)
 
-
-
     res = message_mock.answer.call_args[0][0]
     assert message_mock.answer.call_count == 1
     assert expected_res in res

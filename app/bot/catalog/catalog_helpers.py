@@ -9,11 +9,15 @@ from app.bot.common_handlers import get_main_keyboard
 from app.models import CatalogFamily
 
 
-async def show_all_sizes_catalog(catalog_family_group: list[CatalogFamily], message: types.Message) -> None:
+async def show_all_sizes_catalog(
+    catalog_family_group: list[CatalogFamily],
+    message: types.Message,
+    updated_at: str = '',
+) -> None:
     """Send messages with all bikes in the catalog."""
     for catalog_family in catalog_family_group:
         catalog_answer = [catalog_family.family] + _get_all_sizes_bike_list(catalog_family)
-
+        catalog_answer.append(f'Updated at {updated_at}')
         await message.answer(
             '\n'.join(catalog_answer),
             parse_mode='HTML',
@@ -39,13 +43,18 @@ def _get_all_sizes_bike_list(catalog_family: CatalogFamily) -> list[str]:
     return catalog_positions
 
 
-async def show_one_size_catalog(catalog_family_group: list[CatalogFamily], message: types.Message) -> None:
+async def show_one_size_catalog(
+    catalog_family_group: list[CatalogFamily],
+    message: types.Message,
+    updated_at: str = '',
+) -> None:
     """Send messages with bikes of selected size."""
     for catalog_family in catalog_family_group:
         bike_answer = [catalog_family.family] + [
             hlink(bike.model, bike.link)
             for bike in catalog_family.bike_list
         ]
+        bike_answer.append(f'Updated at {updated_at}')
 
         await message.answer(
             '\n'.join(bike_answer),

@@ -44,3 +44,8 @@ async def get_catalog() -> List[Bike]:
         output.append(bike_item)
 
     return sorted(output, key=lambda bike: bike.id)
+
+
+async def get_update_date() -> str:
+    """Get last catalog updated date."""
+    return str(await db_pool.get(CATALOG_UPDATE_DATE_KEY)) or ''

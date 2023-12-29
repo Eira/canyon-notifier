@@ -10,7 +10,7 @@ from app.bot import buttons
 from app.bot.catalog.catalog_helpers import show_all_sizes_catalog, show_one_size_catalog
 from app.bot.common_handlers import get_main_keyboard, get_sizes_keyboard
 from app.models import Bike, CatalogFamily
-from app.storage.catalog import get_catalog
+from app.storage.catalog import get_catalog, get_update_date
 
 
 class SortCatalogBySize(StatesGroup):
@@ -48,6 +48,7 @@ async def show_catalog(message: types.Message, state: FSMContext) -> None:
         message,
         custom_size_on,
         user_size,
+        await get_update_date(),
     )
 
 
@@ -56,6 +57,7 @@ async def _output_catalog(
     message: types.Message,
     custom_size_on: bool,
     user_size: str,
+    updated_at: str = '',
 ) -> None:
     """Send messages with customised catalog."""
     if not catalog:
@@ -76,6 +78,6 @@ async def _output_catalog(
     ]
 
     if custom_size_on:
-        await show_one_size_catalog(catalog_family_group, message)
+        await show_one_size_catalog(catalog_family_group, message, updated_at)
     else:
-        await show_all_sizes_catalog(catalog_family_group, message)
+        await show_all_sizes_catalog(catalog_family_group, message, updated_at)
