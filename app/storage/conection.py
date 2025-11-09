@@ -1,6 +1,6 @@
 """Connection to Redis."""
 
-import aioredis
+from redis import asyncio as aioredis
 
 from app.settings import app_settings
 

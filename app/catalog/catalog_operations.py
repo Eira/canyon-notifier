@@ -94,7 +94,7 @@ def _parse_bike_list_item(list_item: etree._Element) -> list[Bike]:  # noqa: WPS
         link = f'https://www.canyon.com{link}'
 
     try:
-        sizes_element = list_item.xpath('.//li[contains(@class, productBadges__listItem)]//div')[0]
+        sizes_element = list_item.xpath('.//li[contains(@class, productBadges__listItem)]//span')[0]
     except IndexError:
         return []
     sizes = sizes_element.text.replace('Available to buy in ', '').strip().split('|')
