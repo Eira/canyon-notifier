@@ -1,5 +1,5 @@
 import pytest
-from aioredis import ResponseError
+from redis import asyncio as aioredis
 
 from app.storage.available_bike_list import save_new_available_bikes, get_available_bike_list
 
@@ -12,5 +12,5 @@ async def test_save_new_available_bikes_happy_path(fixture_prefilled_available_b
 
 
 async def test_save_new_available_bikes_empty_list():
-    with pytest.raises(ResponseError, match='wrong number of arguments*'):
+    with pytest.raises(aioredis.ResponseError, match='wrong number of arguments*'):
         await save_new_available_bikes([])

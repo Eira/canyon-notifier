@@ -1,4 +1,3 @@
-import asyncio
 from typing import List
 
 import pytest
@@ -7,6 +6,23 @@ from app.models import Bike, SubscriptionBikeFamily
 from app.storage.available_bike_list import delete_available_bike_list, save_new_available_bikes
 from app.storage.catalog import clear_catalog, insert_actual_catalog
 from app.storage.subscription import get_subscriptions, delete_subscription, create_subscription
+
+
+@pytest.fixture(autouse=True)
+async def redis_connection():
+    from app.storage.conection import db_pool
+    yield
+    await db_pool.aclose()
+
+
+@pytest.fixture(autouse=True)
+async def bot_session_cleanup():
+    yield
+    try:
+        from app.bot_runner import bot
+        await bot.close()
+    except Exception:
+        pass
 
 
 @pytest.fixture()
@@ -89,13 +105,6 @@ async def fixture_prefilled_catalog_few_sizes(
     await insert_actual_catalog(bikes_list)
     yield bikes_list
     await clear_catalog()
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    loop = asyncio.get_event_loop()
-    yield loop
-    loop.close()
 
 
 @pytest.fixture()

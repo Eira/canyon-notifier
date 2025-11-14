@@ -1,5 +1,5 @@
 import pytest
-from aioredis import ResponseError
+from redis import asyncio as aioredis
 
 from app.storage.available_bike_list import delete_available_bike_list, get_available_bike_list
 
@@ -26,7 +26,7 @@ async def test_delete_available_bike_list_delete_all(fixture_empty_available_bik
 async def test_delete_available_bike_list_empty_catalog(fixture_empty_available_bike_list):
     bike_id = []
 
-    with pytest.raises(ResponseError, match='wrong number of arguments*'):
+    with pytest.raises(aioredis.ResponseError, match='wrong number of arguments*'):
         await delete_available_bike_list(bike_id)
 
 
