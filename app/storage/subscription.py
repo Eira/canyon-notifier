@@ -22,9 +22,12 @@ async def create_subscription(chat_id: int, bike_family: str, bike_size: str) ->
         bike_size=bike_size,
     )
 
-    await db_pool.hset(SUBSCRIPTION_BY_ID_KEY.format(subscription_item.subscribe_id), mapping=asdict(subscription_item))
-    await db_pool.sadd(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscription_item.subscribe_id)
-    await db_pool.sadd(SUBSCRIPTIONS_KEY, subscription_item.subscribe_id)
+    await db_pool.hset(  # type: ignore
+        name=SUBSCRIPTION_BY_ID_KEY.format(subscription_item.subscribe_id),
+        mapping=asdict(subscription_item),
+    )
+    await db_pool.sadd(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscription_item.subscribe_id)  # type: ignore
+    await db_pool.sadd(SUBSCRIPTIONS_KEY, subscription_item.subscribe_id)  # type: ignore
 
     return subscription_item
 
@@ -36,11 +39,11 @@ async def get_subscriptions(chat_id: Optional[int] = None) -> List[SubscriptionB
     else:
         db_key = SUBSCRIPTION_BY_CHAT_KEY.format(chat_id)
 
-    subscribe_id_list = await db_pool.smembers(db_key)
+    subscribe_id_list = await db_pool.smembers(db_key)  # type: ignore
     subscriptions_list = []
 
     for subscribe_id in subscribe_id_list:
-        subscription = await db_pool.hgetall(SUBSCRIPTION_BY_ID_KEY.format(subscribe_id))
+        subscription = await db_pool.hgetall(SUBSCRIPTION_BY_ID_KEY.format(subscribe_id))  # type: ignore
 
         subscriptions_list.append(
             SubscriptionBikeFamily(
@@ -62,11 +65,11 @@ async def get_subscription_amount(chat_id: int) -> int:
 async def delete_subscription(subscribe_id: int) -> bool:
     """Delete concrete subscriptions in database. Return amount of deleted subscriptions."""
     key_name = SUBSCRIPTION_BY_ID_KEY.format(subscribe_id)
-    chat_id = await db_pool.hget(key_name, 'chat_id')
+    chat_id = await db_pool.hget(key_name, 'chat_id')  # type: ignore
 
     if chat_id:
         await db_pool.delete(key_name)
-        await db_pool.srem(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscribe_id)
-        await db_pool.srem(SUBSCRIPTIONS_KEY, subscribe_id)
+        await db_pool.srem(SUBSCRIPTION_BY_CHAT_KEY.format(chat_id), subscribe_id)  # type: ignore
+        await db_pool.srem(SUBSCRIPTIONS_KEY, subscribe_id)  # type: ignore
 
     return True
